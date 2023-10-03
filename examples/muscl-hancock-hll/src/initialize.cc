@@ -8,9 +8,10 @@
 using namespace flecsi;
 using namespace muscl;
 
-void action::initialize(muscl::control_policy & cp) {
-  mesh::gcoord axis_extents{opt::x_extents.value(), opt::y_extents.value(),
-    opt::z_extents.value()};
+void
+action::initialize(muscl::control_policy & cp) {
+  mesh::gcoord axis_extents{
+    opt::x_extents.value(), opt::y_extents.value(), opt::z_extents.value()};
 
   // FIXME: Boundaries need to be set by problem type.
   // Add command-line option to specify problem type and do proper
@@ -24,8 +25,10 @@ void action::initialize(muscl::control_policy & cp) {
   boundaries[mesh::z_axis][mesh::high] = mesh::outflow;
 
   mesh::cslot coloring;
-  coloring.allocate(opt::colors.value() == -1 ? flecsi::processes() :
-    opt::colors.value(), axis_extents, boundaries);
+  coloring.allocate(
+    opt::colors.value() == -1 ? flecsi::processes() : opt::colors.value(),
+    axis_extents,
+    boundaries);
 
   // FIXME: problem size must be consistent with initialization, e.g., sod.
   mesh::grect geom;

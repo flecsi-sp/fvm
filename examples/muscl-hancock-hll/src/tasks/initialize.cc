@@ -2,7 +2,8 @@
 
 #include <flecsi/flog.hh>
 
-void muscl::tasks::check(mesh::accessor<ro> m) {
+void
+muscl::tasks::check(mesh::accessor<ro> m) {
 
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     const auto z = m.value<mesh::z_axis>(k);
@@ -31,7 +32,8 @@ static const double sodpR = 0.1;
 
 static const double sodx0 = 0.5;
 
-void muscl::tasks::sod(mesh::accessor<ro> m,
+void
+muscl::tasks::sod(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> ra,
   field<double>::accessor<rw, ro> rua,
   field<double>::accessor<rw, ro> rva,
@@ -44,20 +46,21 @@ void muscl::tasks::sod(mesh::accessor<ro> m,
   auto rw = m.mdspan<mesh::cells>(rwa);
   auto rE = m.mdspan<mesh::cells>(rEa);
 
-  const double mult = 1.0/(gamma - 1.0);
+  const double mult = 1.0 / (gamma - 1.0);
 
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
       for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
         const auto x = m.value<mesh::x_axis>(i);
 
-        if(x<sodx0) {
+        if(x < sodx0) {
           r[k][j][i] = sodrL;
           ru[k][j][i] = soduL;
           rv[k][j][i] = sodvL;
           rw[k][j][i] = sodwL;
           rE[k][j][i] =
-            mult*sodpL + 0.5*sodrL*(soduL*soduL+sodvL*sodvL+sodwL*sodwL);
+            mult * sodpL +
+            0.5 * sodrL * (soduL * soduL + sodvL * sodvL + sodwL * sodwL);
         }
         else {
           r[k][j][i] = sodrR;
@@ -65,7 +68,8 @@ void muscl::tasks::sod(mesh::accessor<ro> m,
           rv[k][j][i] = sodvR;
           rw[k][j][i] = sodwR;
           rE[k][j][i] =
-            mult*sodpR + 0.5*sodrR*(soduR*soduR+sodvR*sodvR+sodwR*sodwR);
+            mult * sodpR +
+            0.5 * sodrR * (soduR * soduR + sodvR * sodvR + sodwR * sodwR);
         } // if
       } // for
     } // for

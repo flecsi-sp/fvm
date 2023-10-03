@@ -20,12 +20,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
   enum axis { x_axis, y_axis, z_axis };
   using axes = has<x_axis, y_axis, z_axis>;
   enum boundary { low, high };
-  enum boundary_type {
-    inflow,
-    outflow,
-    reflecting,
-    periodic
-  };
+  enum boundary_type { inflow, outflow, reflecting, periodic };
 
   using coord = base::coord;
   using gcoord = base::gcoord;
@@ -107,10 +102,10 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
         return this->policy_meta().zdelta;
       } // if
     } // delta
-    
+
     template<axis A>
     FLECSI_INLINE_TARGET double value(std::size_t i) const {
-      return delta<A>()*global_id<A>(i);
+      return delta<A>() * global_id<A>(i);
     } // value
   }; // interface
 
@@ -118,13 +113,13 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     Color Task.
    *--------------------------------------------------------------------------*/
 
-  static coloring color(std::size_t num_colors, gcoord axis_extents,
-    bmap boundaries) {
+  static coloring
+  color(std::size_t num_colors, gcoord axis_extents, bmap boundaries) {
     index_definition idef;
     idef.axes = flecsi::topo::narray_utils::make_axes(num_colors, axis_extents);
     std::size_t ai{0};
 
-    for(auto & a: idef.axes) {
+    for(auto & a : idef.axes) {
       a.hdepth = 2;
       a.bdepth = 2;
     } // for
@@ -137,9 +132,9 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
    *--------------------------------------------------------------------------*/
 
   static void set_geometry(mesh::accessor<flecsi::rw> sm, grect const & g) {
-    sm.set_geometry((g[0][1]-g[0][0])/sm.size<x_axis, quantities>(),
-      (g[1][1]-g[1][0])/sm.size<y_axis, quantities>(),
-      (g[2][1]-g[2][0])/sm.size<z_axis, quantities>());
+    sm.set_geometry((g[0][1] - g[0][0]) / sm.size<x_axis, quantities>(),
+      (g[1][1] - g[1][0]) / sm.size<y_axis, quantities>(),
+      (g[2][1] - g[2][0]) / sm.size<z_axis, quantities>());
   } // set_geometry
 
   static void initialize(flecsi::data::topology_slot<mesh> & s,

@@ -11,8 +11,8 @@ inline flecsi::program_option<std::size_t>
 inline flecsi::program_option<std::size_t>
   z_extents("z-extents", "The z extents of the mesh.", 1);
 
-inline flecsi::program_option<int>
-  colors("MUSCL Options", "colors,c",
+inline flecsi::program_option<int> colors("MUSCL Options",
+  "colors,c",
   "Specify the number of colors (default: num processes).",
   {{flecsi::option_default, -1}});
 } // namespace muscl::opt

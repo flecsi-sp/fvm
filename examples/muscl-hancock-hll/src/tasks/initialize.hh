@@ -5,7 +5,7 @@
 
 namespace muscl::tasks {
 
-  void check(mesh::accessor<ro> m);
+void check(mesh::accessor<ro> m);
 
 void sod(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> ra,
