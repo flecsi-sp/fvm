@@ -9,8 +9,10 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 #------------------------------------------------------------------------------#
 
 add_executable(muscl
+  src/advance.cc
   src/initialize.cc
   src/muscl.cc
+  src/tasks/advance.cc
   src/tasks/initialize.cc
 )
 

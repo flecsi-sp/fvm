@@ -5,8 +5,10 @@
 
 namespace muscl {
 namespace action {
-void initialize(muscl::control_policy & cp);
+
+void initialize(control_policy & cp);
 inline control::action<initialize, cp::initialize> initialize_action;
+
 } // namespace action
 } // namespace muscl
 

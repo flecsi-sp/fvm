@@ -1,3 +1,4 @@
+#include "advance.hh"
 #include "control.hh"
 #include "initialize.hh"
 

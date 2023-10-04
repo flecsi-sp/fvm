@@ -64,4 +64,4 @@ target_include_directories(FleCSI-SP-FVM INTERFACE
 # Add examples.
 #------------------------------------------------------------------------------#
 
-add_subdirectory(examples/muscl-hancock-hll)
+add_subdirectory(examples/muscl)

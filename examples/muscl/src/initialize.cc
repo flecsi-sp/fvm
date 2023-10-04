@@ -9,7 +9,7 @@ using namespace flecsi;
 using namespace muscl;
 
 void
-action::initialize(muscl::control_policy & cp) {
+action::initialize(control_policy & cp) {
   mesh::gcoord axis_extents{
     opt::x_extents.value(), opt::y_extents.value(), opt::z_extents.value()};
 
@@ -24,19 +24,24 @@ action::initialize(muscl::control_policy & cp) {
   boundaries[mesh::z_axis][mesh::low] = mesh::inflow;
   boundaries[mesh::z_axis][mesh::high] = mesh::outflow;
 
-  mesh::cslot coloring;
-  coloring.allocate(
-    opt::colors.value() == -1 ? flecsi::processes() : opt::colors.value(),
-    axis_extents,
-    boundaries);
+  const auto num_colors =
+    opt::colors.value() == -1 ? flecsi::processes() : opt::colors.value();
+  ct.allocate(num_colors);
 
-  // FIXME: problem size must be consistent with initialization, e.g., sod.
-  mesh::grect geom;
-  geom[0][0] = 0.0;
-  geom[0][1] = 1.0;
-  geom[1] = geom[0];
-  geom[2] = geom[0];
+  {
+    mesh::cslot coloring;
+    coloring.allocate(num_colors, axis_extents, boundaries);
 
-  m.allocate(coloring.get(), geom);
-  execute<muscl::tasks::check>(m);
+    // FIXME: problem size must be consistent with initialization, e.g., sod.
+    mesh::grect geom;
+    geom[0][0] = 0.0;
+    geom[0][1] = 1.0;
+    geom[1] = geom[0];
+    geom[2] = geom[0];
+
+    m.allocate(coloring.get(), geom);
+  } // scope
+
+  execute<tasks::check>(m);
+  // execute<tasks::sod>(m, r(m), ru(m), rE(m), 1.4);
 } // action::initialize
