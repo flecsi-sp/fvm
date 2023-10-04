@@ -4,12 +4,17 @@
 #include "tasks/initialize.hh"
 
 #include <flecsi/flog.hh>
+//#include <yaml-cpp/yaml.h>
 
 using namespace flecsi;
 using namespace muscl;
 
 void
 action::initialize(control_policy & cp) {
+  //flog(info) << "config: " << opt::config.value() << std::endl;
+  //YAML::Node config = YAML::LoadFile(opt::config.value());
+
+  //flog(info) << "config: " << config["problem"].as<std::string>() << std::endl;
   mesh::gcoord axis_extents{
     opt::x_extents.value(), opt::y_extents.value(), opt::z_extents.value()};
 
@@ -26,7 +31,7 @@ action::initialize(control_policy & cp) {
 
   const auto num_colors =
     opt::colors.value() == -1 ? flecsi::processes() : opt::colors.value();
-  ct.allocate(num_colors);
+  //ct.allocate(num_colors);
 
   {
     mesh::cslot coloring;
@@ -42,6 +47,7 @@ action::initialize(control_policy & cp) {
     m.allocate(coloring.get(), geom);
   } // scope
 
-  execute<tasks::check>(m);
-  // execute<tasks::sod>(m, r(m), ru(m), rE(m), 1.4);
+  //execute<tasks::check>(m);
+ // execute<tasks::sod>(m, r(m), ru(m), rE(m), 1.4);
+  //execute<tasks::init>(m, r(m), ru(m), rE(m), u(m), p(m), lmax(ct), 1.4);
 } // action::initialize

@@ -1,4 +1,5 @@
 #include "initialize.hh"
+#include "../utils.hh"
 
 #include <flecsi/flog.hh>
 
@@ -55,13 +56,13 @@ static const double sodx0 = 0.5;
 
 void
 muscl::tasks::sod(mesh::accessor<ro> m,
-  field<double>::accessor<rw, ro> ra,
-  field<velocity>::accessor<rw, ro> rua,
-  field<double>::accessor<rw, ro> rEa,
+  field<double>::accessor<rw, ro> r_a,
+  field<velocity>::accessor<rw, ro> ru_a,
+  field<double>::accessor<rw, ro> rE_a,
   double gamma) {
-  auto r = m.mdspan<mesh::cells>(ra);
-  auto ru = m.mdspan<mesh::cells>(rua);
-  auto rE = m.mdspan<mesh::cells>(rEa);
+  auto r = m.mdspan<mesh::cells>(r_a);
+  auto ru = m.mdspan<mesh::cells>(ru_a);
+  auto rE = m.mdspan<mesh::cells>(rE_a);
 
   const double mult = 1.0 / (gamma - 1.0);
 
@@ -92,3 +93,54 @@ muscl::tasks::sod(mesh::accessor<ro> m,
     } // for
   } // for
 } // sod
+
+/*----------------------------------------------------------------------------*
+  Hydro initialization.
+ *----------------------------------------------------------------------------*/
+
+void
+muscl::tasks::init(mesh::accessor<ro> m,
+  field<double>::accessor<ro, ro> r_a,
+  field<velocity>::accessor<ro, ro> ru_a,
+  field<double>::accessor<ro, ro> rE_a,
+  field<velocity>::accessor<wo, ro> u_a,
+  field<double>::accessor<wo, ro> p_a,
+  single<velocity>::accessor<wo> lmax,
+  double gamma) {
+  auto r = m.mdspan<mesh::cells>(r_a);
+  auto ru = m.mdspan<mesh::cells>(ru_a);
+  auto rE = m.mdspan<mesh::cells>(rE_a);
+  auto u = m.mdspan<mesh::cells>(u_a);
+  auto p = m.mdspan<mesh::cells>(p_a);
+
+  // Initialize primitive quantities.
+  for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
+    for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
+      for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+        u[k][j][i].x = ru[k][j][i].x / r[k][j][i];
+        u[k][j][i].y = ru[k][j][i].y / r[k][j][i];
+        u[k][j][i].z = ru[k][j][i].z / r[k][j][i];
+        p[k][j][i] =
+          (gamma - 1.0) * (rE[k][j][i] - 0.5 * r[k][j][i] *
+                                           (utils::sqr(u[k][j][i].x) +
+                                             utils::sqr(u[k][j][i].y) +
+                                             utils::sqr(u[k][j][i].z)));
+      } // for
+    } // for
+  } // for
+
+  // Iinitialize max eigenvalues for dt.
+  lmax->x = std::numeric_limits<double>::min();
+  lmax->y = std::numeric_limits<double>::min();
+  lmax->z = std::numeric_limits<double>::min();
+  for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
+    for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
+      for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+        const double c = std::sqrt(gamma * p[k][j][i] / r[k][j][i]);
+        lmax->x = std::max(std::abs(u[k][j][i].x) + c, lmax->x);
+        lmax->y = std::max(std::abs(u[k][j][i].y) + c, lmax->y);
+        lmax->z = std::max(std::abs(u[k][j][i].z) + c, lmax->z);
+      } // for
+    } // for
+  } // for
+} // init

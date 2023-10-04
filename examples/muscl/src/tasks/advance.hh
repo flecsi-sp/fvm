@@ -2,11 +2,11 @@
 #define MUSCL_TASKS_ADVANCE_HH
 
 #include "../state.hh"
+#include "../utils.hh"
 
 namespace muscl::tasks {
 double dtmin(mesh::accessor<ro> m, single<velocity>::accessor<ro> lmax);
 
-#define SQR(x) (x) * (x)
 template<typename L>
 void
 advance(mesh::accessor<ro> m,
@@ -116,14 +116,16 @@ advance(mesh::accessor<ro> m,
         ruHead[k][j][i].y = rHead[k][j][i] * uHead[k][j][i].y;
         ruTail[k][j][i].z = rTail[k][j][i] * uTail[k][j][i].z;
         ruHead[k][j][i].z = rHead[k][j][i] * uHead[k][j][i].z;
-        rETail[k][j][i] = p2rEFactor * pTail[k][j][i] +
-                          0.5 * rTail[k][j][i] *
-                            (SQR(uTail[k][j][i].x) + SQR(uTail[k][j][i].y) +
-                              SQR(uTail[k][j][i].z));
-        rEHead[k][j][i] = p2rEFactor * pHead[k][j][i] +
-                          0.5 * rHead[k][j][i] *
-                            (SQR(uHead[k][j][i].x) + SQR(uHead[k][j][i].y) +
-                              SQR(uHead[k][j][i].z));
+        rETail[k][j][i] =
+          p2rEFactor * pTail[k][j][i] +
+          0.5 * rTail[k][j][i] *
+            (utils::sqr(uTail[k][j][i].x) + utils::sqr(uTail[k][j][i].y) +
+              utils::sqr(uTail[k][j][i].z));
+        rEHead[k][j][i] =
+          p2rEFactor * pHead[k][j][i] +
+          0.5 * rHead[k][j][i] *
+            (utils::sqr(uHead[k][j][i].x) + utils::sqr(uHead[k][j][i].y) +
+              utils::sqr(uHead[k][j][i].z));
       } // for
     } // for
   } // for
@@ -174,15 +176,15 @@ advance(mesh::accessor<ro> m,
         u[k][j][i].x = qu[k][j][i].x / q[k][j][i];
         u[k][j][i].y = qu[k][j][i].y / q[k][j][i];
         u[k][j][i].z = qu[k][j][i].z / q[k][j][i];
-        p[k][j][i] = (gamma - 1.0) *
-                     (qE[k][j][i] - 0.5 * q[k][j][i] *
-                                      (SQR(u[k][j][i].x) + SQR(u[k][j][i].y) +
-                                        SQR(u[k][j][i].z)));
+        p[k][j][i] =
+          (gamma - 1.0) * (qE[k][j][i] - 0.5 * q[k][j][i] *
+                                           (utils::sqr(u[k][j][i].x) +
+                                             utils::sqr(u[k][j][i].y) +
+                                             utils::sqr(u[k][j][i].z)));
       } // for
     } // for
   } // for
 } // advance
-#undef SQR
 
 } // namespace muscl::tasks
 

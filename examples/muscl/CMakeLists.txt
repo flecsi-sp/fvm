@@ -5,6 +5,12 @@
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
 #------------------------------------------------------------------------------#
+# Yaml
+#------------------------------------------------------------------------------#
+
+#find_package(yaml-cpp REQUIRED)
+
+#------------------------------------------------------------------------------#
 # Add an executable.
 #------------------------------------------------------------------------------#
 
@@ -22,4 +28,5 @@ add_executable(muscl
 
 target_link_libraries(muscl FleCSI::FleCSI
   FleCSI-SP-FVM::FleCSI-SP-FVM
+  #  yaml-cpp
 )

@@ -4,6 +4,8 @@
 #include <flecsi/execution.hh>
 
 namespace muscl::opt {
+inline flecsi::program_option<std::string>
+  config("yaml file", "The yaml config file.", 1);
 inline flecsi::program_option<std::size_t>
   x_extents("x-extents", "The x extents of the mesh.", 1);
 inline flecsi::program_option<std::size_t>
