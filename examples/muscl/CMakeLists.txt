@@ -18,7 +18,7 @@ add_executable(muscl
   src/advance.cc
   src/initialize.cc
   src/muscl.cc
-  src/tasks/advance.cc
+  src/tasks/hydro.cc
   src/tasks/initialize.cc
 )
 

@@ -2,6 +2,7 @@
 #include "options.hh"
 #include "state.hh"
 #include "tasks/boundary.hh"
+#include "tasks/hydro.hh"
 #include "tasks/initialize.hh"
 
 #include <flecsi/flog.hh>
@@ -85,7 +86,9 @@ action::initialize(control_policy & cp) {
   } // if
 
   execute<tasks::apply_boundaries>(m, bmap(gt), r(m), ru(m), rE(m));
-  execute<tasks::init::primitives>(
-    m, r(m), ru(m), rE(m), u(m), p(m), lmax(ct), gamma(gt));
-  cp.dtmin() = reduce<tasks::dtmin, exec::fold::min>(m, lmax(ct));
+  execute<tasks::hydro::update_primitives>(
+    m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
+  execute<tasks::hydro::update_eigenvalues>(
+    m, r(m), u(m), p(m), lmax(ct), gamma(gt));
+  cp.dtmin() = reduce<tasks::hydro::update_dtmin, exec::fold::min>(m, lmax(ct));
 } // action::initialize

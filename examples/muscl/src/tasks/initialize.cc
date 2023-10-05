@@ -4,39 +4,6 @@
 #include <flecsi/flog.hh>
 
 /*----------------------------------------------------------------------------*
-  Sanity check.
- *----------------------------------------------------------------------------*/
-
-void
-muscl::tasks::init::check(mesh::accessor<ro> m) {
-
-  for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
-    const auto z = m.center<mesh::z_axis>(k);
-    const auto ztail = m.tail<mesh::z_axis>(k);
-    const auto zhead = m.head<mesh::z_axis>(k);
-    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
-      const auto y = m.center<mesh::y_axis>(j);
-      const auto ytail = m.tail<mesh::y_axis>(j);
-      const auto yhead = m.head<mesh::y_axis>(j);
-      for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-        const auto x = m.center<mesh::x_axis>(i);
-        const auto xtail = m.tail<mesh::x_axis>(i);
-        const auto xhead = m.head<mesh::x_axis>(i);
-
-        flog(info) << "(" << i << "," << j << "," << k << ")" << std::endl;
-        flog(info) << "x: " << xhead << " -> " << x << " -> " << xtail
-                   << std::endl;
-        flog(info) << "y: " << yhead << " -> " << y << " -> " << ytail
-                   << std::endl;
-        flog(info) << "z: " << zhead << " -> " << z << " -> " << ztail
-                   << std::endl;
-        flog(info) << std::endl;
-      } // for
-    } // for
-  } // for
-} // check
-
-/*----------------------------------------------------------------------------*
   Gamma.
  *----------------------------------------------------------------------------*/
 
@@ -123,56 +90,3 @@ muscl::tasks::init::sod(mesh::accessor<ro> m,
     } // for
   } // for
 } // sod
-
-/*----------------------------------------------------------------------------*
-  Hydro initialization.
- *----------------------------------------------------------------------------*/
-
-void
-muscl::tasks::init::primitives(mesh::accessor<ro> m,
-  field<double>::accessor<ro, ro> r_a,
-  field<velocity>::accessor<ro, ro> ru_a,
-  field<double>::accessor<ro, ro> rE_a,
-  field<velocity>::accessor<wo, ro> u_a,
-  field<double>::accessor<wo, ro> p_a,
-  single<velocity>::accessor<wo> lmax_a,
-  single<double>::accessor<ro> gamma_a) {
-  auto r = m.mdspan<mesh::cells>(r_a);
-  auto ru = m.mdspan<mesh::cells>(ru_a);
-  auto rE = m.mdspan<mesh::cells>(rE_a);
-  auto u = m.mdspan<mesh::cells>(u_a);
-  auto p = m.mdspan<mesh::cells>(p_a);
-  auto & lmax = *lmax_a;
-  auto const gamma = *gamma_a;
-
-  // Initialize primitive quantities.
-  for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-    for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
-        u[k][j][i].x = ru[k][j][i].x / r[k][j][i];
-        u[k][j][i].y = ru[k][j][i].y / r[k][j][i];
-        u[k][j][i].z = ru[k][j][i].z / r[k][j][i];
-        p[k][j][i] =
-          (gamma - 1.0) * (rE[k][j][i] - 0.5 * r[k][j][i] *
-                                           (utils::sqr(u[k][j][i].x) +
-                                             utils::sqr(u[k][j][i].y) +
-                                             utils::sqr(u[k][j][i].z)));
-      } // for
-    } // for
-  } // for
-
-  // Iinitialize max eigenvalues for dt.
-  lmax.x = std::numeric_limits<double>::min();
-  lmax.y = std::numeric_limits<double>::min();
-  lmax.z = std::numeric_limits<double>::min();
-  for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-    for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
-        const double c = std::sqrt(gamma * p[k][j][i] / r[k][j][i]);
-        lmax.x = std::max(std::abs(u[k][j][i].x) + c, lmax.x);
-        lmax.y = std::max(std::abs(u[k][j][i].y) + c, lmax.y);
-        lmax.z = std::max(std::abs(u[k][j][i].z) + c, lmax.z);
-      } // for
-    } // for
-  } // for
-} // init

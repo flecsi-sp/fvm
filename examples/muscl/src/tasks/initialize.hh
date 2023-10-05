@@ -5,8 +5,6 @@
 
 namespace muscl::tasks::init {
 
-void check(mesh::accessor<ro> m);
-
 void gamma(single<double>::accessor<wo> gamma_a, double g);
 
 void boundaries(single<mesh::bmap>::accessor<wo> bmap_a,
@@ -21,15 +19,6 @@ void sod(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
   field<velocity>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a,
-  single<double>::accessor<ro> gamma_a);
-
-void primitives(mesh::accessor<ro> m,
-  field<double>::accessor<ro, ro> r_a,
-  field<velocity>::accessor<ro, ro> ru_a,
-  field<double>::accessor<ro, ro> rE_a,
-  field<velocity>::accessor<wo, ro> u_a,
-  field<double>::accessor<wo, ro> p_a,
-  single<velocity>::accessor<wo> lmax_a,
   single<double>::accessor<ro> gamma_a);
 
 } // namespace muscl::tasks::init

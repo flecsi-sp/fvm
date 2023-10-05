@@ -2,7 +2,7 @@
 #define POISSON_CONTROL_HH
 
 #include "state.hh"
-#include "tasks/advance.hh"
+#include "tasks/hydro.hh"
 
 #include <flecsi/execution.hh>
 #include <flecsi/flog.hh>
