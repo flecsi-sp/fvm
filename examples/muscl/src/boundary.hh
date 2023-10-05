@@ -6,7 +6,8 @@
 namespace muscl {
 
 template<mesh::axis A, mesh::boundary B>
-void inflow(mesh::accessor<ro> m,
+void
+inflow(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
   field<velocity>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a) {
@@ -35,16 +36,16 @@ void inflow(mesh::accessor<ro> m,
       const std::size_t i = m.size<mesh::x_axis, mesh::all>();
       for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
         for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-          r[k][j][i-1] = r[k][j][i-3];
-          r[k][j][i-2] = r[k][j][i-3];
-          ru[k][j][i-1].x = ru[k][j][i-3].x;
-          ru[k][j][i-2].x = ru[k][j][i-3].x;
-          ru[k][j][i-1].y = ru[k][j][i-3].y;
-          ru[k][j][i-2].y = ru[k][j][i-3].y;
-          ru[k][j][i-1].z = ru[k][j][i-3].z;
-          ru[k][j][i-2].z = ru[k][j][i-3].z;
-          rE[k][j][i-1] = rE[k][j][i-3];
-          rE[k][j][i-2] = rE[k][j][i-3];
+          r[k][j][i - 1] = r[k][j][i - 3];
+          r[k][j][i - 2] = r[k][j][i - 3];
+          ru[k][j][i - 1].x = ru[k][j][i - 3].x;
+          ru[k][j][i - 2].x = ru[k][j][i - 3].x;
+          ru[k][j][i - 1].y = ru[k][j][i - 3].y;
+          ru[k][j][i - 2].y = ru[k][j][i - 3].y;
+          ru[k][j][i - 1].z = ru[k][j][i - 3].z;
+          ru[k][j][i - 2].z = ru[k][j][i - 3].z;
+          rE[k][j][i - 1] = rE[k][j][i - 3];
+          rE[k][j][i - 2] = rE[k][j][i - 3];
         } // for
       } // for
     } // if
@@ -70,16 +71,16 @@ void inflow(mesh::accessor<ro> m,
       const std::size_t j = m.size<mesh::x_axis, mesh::all>();
       for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
-          r[k][j-1][i] = r[k][j-3][i];
-          r[k][j-2][i] = r[k][j-3][i];
-          ru[k][j-1][i].x = ru[k][j-3][i].x;
-          ru[k][j-2][i].x = ru[k][j-3][i].x;
-          ru[k][j-1][i].y = ru[k][j-3][i].y;
-          ru[k][j-2][i].y = ru[k][j-3][i].y;
-          ru[k][j-1][i].z = ru[k][j-3][i].z;
-          ru[k][j-2][i].z = ru[k][j-3][i].z;
-          rE[k][j-1][i] = rE[k][j-3][i];
-          rE[k][j-2][i] = rE[k][j-3][i];
+          r[k][j - 1][i] = r[k][j - 3][i];
+          r[k][j - 2][i] = r[k][j - 3][i];
+          ru[k][j - 1][i].x = ru[k][j - 3][i].x;
+          ru[k][j - 2][i].x = ru[k][j - 3][i].x;
+          ru[k][j - 1][i].y = ru[k][j - 3][i].y;
+          ru[k][j - 2][i].y = ru[k][j - 3][i].y;
+          ru[k][j - 1][i].z = ru[k][j - 3][i].z;
+          ru[k][j - 2][i].z = ru[k][j - 3][i].z;
+          rE[k][j - 1][i] = rE[k][j - 3][i];
+          rE[k][j - 2][i] = rE[k][j - 3][i];
         } // for
       } // for
     } // if
@@ -105,22 +106,22 @@ void inflow(mesh::accessor<ro> m,
       const std::size_t k = m.size<mesh::z_axis, mesh::all>();
       for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
-          r[k-1][j][i] = r[k-3][j][i];
-          r[k-2][j][i] = r[k-3][j][i];
-          ru[k-1][j][i].x = ru[k-3][j][i].x;
-          ru[k-2][j][i].x = ru[k-3][j][i].x;
-          ru[k-1][j][i].y = ru[k-3][j][i].y;
-          ru[k-2][j][i].y = ru[k-3][j][i].y;
-          ru[k-1][j][i].z = ru[k-3][j][i].z;
-          ru[k-2][j][i].z = ru[k-3][j][i].z;
-          rE[k-1][j][i] = rE[k-3][j][i];
-          rE[k-2][j][i] = rE[k-3][j][i];
+          r[k - 1][j][i] = r[k - 3][j][i];
+          r[k - 2][j][i] = r[k - 3][j][i];
+          ru[k - 1][j][i].x = ru[k - 3][j][i].x;
+          ru[k - 2][j][i].x = ru[k - 3][j][i].x;
+          ru[k - 1][j][i].y = ru[k - 3][j][i].y;
+          ru[k - 2][j][i].y = ru[k - 3][j][i].y;
+          ru[k - 1][j][i].z = ru[k - 3][j][i].z;
+          ru[k - 2][j][i].z = ru[k - 3][j][i].z;
+          rE[k - 1][j][i] = rE[k - 3][j][i];
+          rE[k - 2][j][i] = rE[k - 3][j][i];
         } // for
       } // for
     } // if
   } // if
 } // inflow
 
-} // muscl
+} // namespace muscl
 
 #endif // MUSCL_BOUNDARY_HH
