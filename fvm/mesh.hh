@@ -135,8 +135,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     Color Task.
    *--------------------------------------------------------------------------*/
 
-  static coloring
-  color(std::size_t num_colors, gcoord axis_extents, bmap boundaries) {
+  static coloring color(std::size_t num_colors, gcoord axis_extents) {
     index_definition idef;
     idef.axes = flecsi::topo::narray_utils::make_axes(num_colors, axis_extents);
     std::size_t ai{0};

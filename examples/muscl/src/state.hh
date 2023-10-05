@@ -7,11 +7,16 @@ namespace muscl {
 
 inline mesh::slot m;
 inline index::slot ct; /* color topology */
+inline global::slot & gt = flecsi::global_topology;
 
 // Time parameters.
 inline const single<double>::definition<flecsi::topo::index> t;
 inline const single<double>::definition<flecsi::topo::index> dt;
 inline const single<velocity>::definition<flecsi::topo::index> lmax;
+
+// Globals.
+inline const single<mesh::bmap>::definition<flecsi::topo::global> bmap;
+inline const single<double>::definition<flecsi::topo::global> gamma;
 
 // Conserved quantities.
 inline const field<double>::definition<mesh, mesh::cells> r;

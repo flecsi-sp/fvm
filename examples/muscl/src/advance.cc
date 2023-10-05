@@ -10,12 +10,7 @@ using namespace muscl;
 
 void
 action::advance(control_policy & cp) {
-  flog(info) << "advance action" << std::endl;
-
-  const double dt{0};
-  const double gamma{0};
-
-  execute<tasks::advance<gminmod>>(m,
+  execute<tasks::advance<genminmod>>(m,
     r(m),
     ru(m),
     rE(m),
@@ -40,6 +35,7 @@ action::advance(control_policy & cp) {
     rF(m),
     ruF(m),
     rEF(m),
-    dt,
-    gamma);
+    gamma(gt),
+    cp.dt());
+  cp.dtmin() = reduce<tasks::dtmin, exec::fold::min>(m, lmax(ct));
 } // action::advance

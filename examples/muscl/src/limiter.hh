@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-struct gminmod {
+struct genminmod {
   static double limit(double qL, double qC, double qR) {
     const double GMMLTheta{1.5};
     const double sC{0.5 * (qR - qL)};
@@ -14,6 +14,6 @@ struct gminmod {
               : (sC > 0.0 ? 1.0 : -1.0) *
                   std::min(std::abs(sC), std::min(std::abs(sL), std::abs(sR))));
   } // operator()
-}; // gminmod
+}; // genminmod
 
 #endif // MUSCL_LIMITER_HH

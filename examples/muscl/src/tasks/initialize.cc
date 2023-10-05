@@ -8,7 +8,7 @@
  *----------------------------------------------------------------------------*/
 
 void
-muscl::tasks::check(mesh::accessor<ro> m) {
+muscl::tasks::init::check(mesh::accessor<ro> m) {
 
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     const auto z = m.center<mesh::z_axis>(k);
@@ -34,7 +34,37 @@ muscl::tasks::check(mesh::accessor<ro> m) {
       } // for
     } // for
   } // for
+} // check
+
+/*----------------------------------------------------------------------------*
+  Gamma.
+ *----------------------------------------------------------------------------*/
+
+void
+muscl::tasks::init::gamma(single<double>::accessor<wo> gamma_a, double g) {
+  (*gamma_a) = g;
 }
+
+/*----------------------------------------------------------------------------*
+  Boundary initialization.
+ *----------------------------------------------------------------------------*/
+
+void
+muscl::tasks::init::boundaries(single<mesh::bmap>::accessor<wo> bmap_a,
+  mesh::boundary_type xlow,
+  mesh::boundary_type xhigh,
+  mesh::boundary_type ylow,
+  mesh::boundary_type yhigh,
+  mesh::boundary_type zlow,
+  mesh::boundary_type zhigh) {
+  auto & bmap = *bmap_a;
+  bmap[mesh::x_axis][mesh::low] = xlow;
+  bmap[mesh::x_axis][mesh::high] = xhigh;
+  bmap[mesh::y_axis][mesh::low] = ylow;
+  bmap[mesh::y_axis][mesh::high] = yhigh;
+  bmap[mesh::z_axis][mesh::low] = zlow;
+  bmap[mesh::z_axis][mesh::high] = zhigh;
+} // boundaries
 
 /*----------------------------------------------------------------------------*
   Sod Shock Tube.
@@ -55,15 +85,15 @@ static const double sodpR = 0.1;
 static const double sodx0 = 0.5;
 
 void
-muscl::tasks::sod(mesh::accessor<ro> m,
+muscl::tasks::init::sod(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
   field<velocity>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a,
-  double gamma) {
+  single<double>::accessor<ro> gamma_a) {
   auto r = m.mdspan<mesh::cells>(r_a);
   auto ru = m.mdspan<mesh::cells>(ru_a);
   auto rE = m.mdspan<mesh::cells>(rE_a);
-
+  auto const gamma = *gamma_a;
   const double mult = 1.0 / (gamma - 1.0);
 
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
@@ -99,19 +129,21 @@ muscl::tasks::sod(mesh::accessor<ro> m,
  *----------------------------------------------------------------------------*/
 
 void
-muscl::tasks::init(mesh::accessor<ro> m,
+muscl::tasks::init::primitives(mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> r_a,
   field<velocity>::accessor<ro, ro> ru_a,
   field<double>::accessor<ro, ro> rE_a,
   field<velocity>::accessor<wo, ro> u_a,
   field<double>::accessor<wo, ro> p_a,
-  single<velocity>::accessor<wo> lmax,
-  double gamma) {
+  single<velocity>::accessor<wo> lmax_a,
+  single<double>::accessor<ro> gamma_a) {
   auto r = m.mdspan<mesh::cells>(r_a);
   auto ru = m.mdspan<mesh::cells>(ru_a);
   auto rE = m.mdspan<mesh::cells>(rE_a);
   auto u = m.mdspan<mesh::cells>(u_a);
   auto p = m.mdspan<mesh::cells>(p_a);
+  auto & lmax = *lmax_a;
+  auto const gamma = *gamma_a;
 
   // Initialize primitive quantities.
   for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
@@ -130,16 +162,16 @@ muscl::tasks::init(mesh::accessor<ro> m,
   } // for
 
   // Iinitialize max eigenvalues for dt.
-  lmax->x = std::numeric_limits<double>::min();
-  lmax->y = std::numeric_limits<double>::min();
-  lmax->z = std::numeric_limits<double>::min();
+  lmax.x = std::numeric_limits<double>::min();
+  lmax.y = std::numeric_limits<double>::min();
+  lmax.z = std::numeric_limits<double>::min();
   for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
       for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
         const double c = std::sqrt(gamma * p[k][j][i] / r[k][j][i]);
-        lmax->x = std::max(std::abs(u[k][j][i].x) + c, lmax->x);
-        lmax->y = std::max(std::abs(u[k][j][i].y) + c, lmax->y);
-        lmax->z = std::max(std::abs(u[k][j][i].z) + c, lmax->z);
+        lmax.x = std::max(std::abs(u[k][j][i].x) + c, lmax.x);
+        lmax.y = std::max(std::abs(u[k][j][i].y) + c, lmax.y);
+        lmax.z = std::max(std::abs(u[k][j][i].z) + c, lmax.z);
       } // for
     } // for
   } // for

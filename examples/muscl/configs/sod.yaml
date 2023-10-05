@@ -4,4 +4,15 @@ gamma: 1.4
 t0: 0.0
 tf: 0.1
 max_steps: 100
-cfl: 0.8
+cfl: 0.9
+max_dt: 0.5
+coords:
+  - [0.0, 0.0, 0.0]
+  - [1.0, 1.0, 1.0]
+boundary:
+  xlow: inflow
+  xhigh: outflow
+  ylow: inflow
+  yhigh: outflow
+  zlow: inflow
+  zhigh: outflow

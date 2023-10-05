@@ -1,53 +1,91 @@
 #include "initialize.hh"
 #include "options.hh"
 #include "state.hh"
+#include "tasks/boundary.hh"
 #include "tasks/initialize.hh"
 
 #include <flecsi/flog.hh>
-//#include <yaml-cpp/yaml.h>
+#include <yaml-cpp/yaml.h>
 
 using namespace flecsi;
 using namespace muscl;
 
 void
 action::initialize(control_policy & cp) {
-  //flog(info) << "config: " << opt::config.value() << std::endl;
-  //YAML::Node config = YAML::LoadFile(opt::config.value());
+  YAML::Node config = YAML::LoadFile(opt::config.value());
 
-  //flog(info) << "config: " << config["problem"].as<std::string>() << std::endl;
+  /*--------------------------------------------------------------------------*
+    Control model initialization.
+   *--------------------------------------------------------------------------*/
+
+  cp.init(config["t0"].as<double>(),
+    config["tf"].as<double>(),
+    config["max_steps"].as<std::size_t>(),
+    config["cfl"].as<double>(),
+    config["max_dt"].as<double>());
+
+  /*--------------------------------------------------------------------------*
+    Set mesh resolution.
+   *--------------------------------------------------------------------------*/
+
   mesh::gcoord axis_extents{
     opt::x_extents.value(), opt::y_extents.value(), opt::z_extents.value()};
 
-  // FIXME: Boundaries need to be set by problem type.
-  // Add command-line option to specify problem type and do proper
-  // initialization.
-  mesh::bmap boundaries;
-  boundaries[mesh::x_axis][mesh::low] = mesh::inflow;
-  boundaries[mesh::x_axis][mesh::high] = mesh::outflow;
-  boundaries[mesh::y_axis][mesh::low] = mesh::inflow;
-  boundaries[mesh::y_axis][mesh::high] = mesh::outflow;
-  boundaries[mesh::z_axis][mesh::low] = mesh::inflow;
-  boundaries[mesh::z_axis][mesh::high] = mesh::outflow;
+  /*--------------------------------------------------------------------------*
+    Gamma.
+   *--------------------------------------------------------------------------*/
+
+  execute<tasks::init::gamma>(gamma(gt), config["gamma"].as<double>());
+
+  /*--------------------------------------------------------------------------*
+    Set boundaries.
+   *--------------------------------------------------------------------------*/
+
+  execute<tasks::init::boundaries>(bmap(gt),
+    utils::mesh_boundary(config["boundary"]["xlow"].as<std::string>()),
+    utils::mesh_boundary(config["boundary"]["xhigh"].as<std::string>()),
+    utils::mesh_boundary(config["boundary"]["ylow"].as<std::string>()),
+    utils::mesh_boundary(config["boundary"]["yhigh"].as<std::string>()),
+    utils::mesh_boundary(config["boundary"]["zlow"].as<std::string>()),
+    utils::mesh_boundary(config["boundary"]["zhigh"].as<std::string>()));
+
+  /*--------------------------------------------------------------------------*
+    Topology allocations.
+   *--------------------------------------------------------------------------*/
 
   const auto num_colors =
     opt::colors.value() == -1 ? flecsi::processes() : opt::colors.value();
-  //ct.allocate(num_colors);
+  ct.allocate(num_colors);
 
   {
     mesh::cslot coloring;
-    coloring.allocate(num_colors, axis_extents, boundaries);
+    coloring.allocate(num_colors, axis_extents);
 
-    // FIXME: problem size must be consistent with initialization, e.g., sod.
     mesh::grect geom;
-    geom[0][0] = 0.0;
-    geom[0][1] = 1.0;
-    geom[1] = geom[0];
-    geom[2] = geom[0];
+    geom[0][0] = config["coords"][0][0].as<double>();
+    geom[0][1] = config["coords"][1][0].as<double>();
+    geom[1][0] = config["coords"][0][1].as<double>();
+    geom[1][1] = config["coords"][1][1].as<double>();
+    geom[2][0] = config["coords"][0][2].as<double>();
+    geom[2][1] = config["coords"][1][2].as<double>();
 
     m.allocate(coloring.get(), geom);
   } // scope
 
-  //execute<tasks::check>(m);
- // execute<tasks::sod>(m, r(m), ru(m), rE(m), 1.4);
-  //execute<tasks::init>(m, r(m), ru(m), rE(m), u(m), p(m), lmax(ct), 1.4);
+  /*--------------------------------------------------------------------------*
+    Initialize problem state.
+   *--------------------------------------------------------------------------*/
+
+  if(config["problem"].as<std::string>() == "sod") {
+    execute<tasks::init::sod>(m, r(m), ru(m), rE(m), gamma(gt));
+  }
+  else {
+    flog_fatal(
+      "unsupported problem(" << config["problem"].as<std::string>() << ")");
+  } // if
+
+  execute<tasks::apply_boundaries>(m, bmap(gt), r(m), ru(m), rE(m));
+  execute<tasks::init::primitives>(
+    m, r(m), ru(m), rE(m), u(m), p(m), lmax(ct), gamma(gt));
+  cp.dtmin() = reduce<tasks::dtmin, exec::fold::min>(m, lmax(ct));
 } // action::initialize

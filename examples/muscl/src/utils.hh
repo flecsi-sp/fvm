@@ -1,13 +1,35 @@
 #ifndef MUSCL_UTILS_HH
 #define MUSCL_UTILS_HH
 
+#include <fvm/mesh.hh>
+
 namespace muscl::utils {
 
 template<typename T>
-T sqr(T t) {
-  return t*t;
+T
+sqr(T t) {
+  return t * t;
 } // sq
 
-} // namespace musl::utils
+inline fvm::mesh::boundary_type
+mesh_boundary(std::string const & b) {
+  if(b == "inflow") {
+    return fvm::mesh::boundary_type::inflow;
+  }
+  if(b == "outflow") {
+    return fvm::mesh::boundary_type::outflow;
+  }
+  if(b == "reflecting") {
+    return fvm::mesh::boundary_type::reflecting;
+  }
+  if(b == "periodic") {
+    return fvm::mesh::boundary_type::periodic;
+  }
+  else {
+    flog_fatal("invalid boundary type(" << b << ")");
+  } // if
+} // mesh_boundary
+
+} // namespace muscl::utils
   //
 #endif // MUSCL_UTILS_HH

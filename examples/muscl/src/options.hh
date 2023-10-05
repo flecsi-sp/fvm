@@ -4,8 +4,16 @@
 #include <flecsi/execution.hh>
 
 namespace muscl::opt {
-inline flecsi::program_option<std::string>
-  config("yaml file", "The yaml config file.", 1);
+inline flecsi::program_option<std::string> config("yaml file",
+  "The yaml config file.",
+  1,
+  [](flecsi::any const & v, std::stringstream & ss) {
+    const std::string value = flecsi::option_value<std::string>(v);
+    return value.find(".yaml") != std::string::npos
+             ? true
+             : (ss << "file(" << value << ") has invalid suffix") && false;
+  });
+
 inline flecsi::program_option<std::size_t>
   x_extents("x-extents", "The x extents of the mesh.", 1);
 inline flecsi::program_option<std::size_t>

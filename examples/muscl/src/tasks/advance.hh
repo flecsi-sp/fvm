@@ -34,8 +34,8 @@ advance(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> rF_a,
   field<velocity>::accessor<rw, ro> ruF_a,
   field<double>::accessor<rw, ro> rEF_a,
-  double dt,
-  double gamma) {
+  single<double>::accessor<ro> gamma_a,
+  double dt) {
   auto r = m.mdspan<mesh::cells>(r_a);
   auto ru = m.mdspan<mesh::cells>(ru_a);
   auto rE = m.mdspan<mesh::cells>(rE_a);
@@ -60,6 +60,7 @@ advance(mesh::accessor<ro> m,
   auto rF = m.mdspan<mesh::cells>(rF_a);
   auto ruF = m.mdspan<mesh::cells>(ruF_a);
   auto rEF = m.mdspan<mesh::cells>(rEF_a);
+  auto const gamma = *gamma_a;
 
   /*--------------------------------------------------------------------------*
     Compute X slopes.
