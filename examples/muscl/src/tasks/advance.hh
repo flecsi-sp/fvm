@@ -70,7 +70,7 @@ advance(mesh::accessor<ro> m,
 
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::slopes>()) {
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) {
         dr_ds[k][j][i] =
           xslope_factor * L::limit(r[k][j][i - 1], r[k][j][i], r[k][j][i + 1]);
         du_ds[k][j][i].x =
@@ -97,7 +97,7 @@ advance(mesh::accessor<ro> m,
 
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::slopes>()) {
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) {
         // Primitive quantities
         rTail[k][j][i] = r[k][j][i] + xextrap_factor * dr_ds[k][j][i];
         rHead[k][j][i] = r[k][j][i] - xextrap_factor * dr_ds[k][j][i];
@@ -140,7 +140,7 @@ advance(mesh::accessor<ro> m,
 
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::slopes>()) {
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) {
         // Density
         qu[k][j][i].x =
           r[k][j][i] - xcourant * (ruTail[k][j][i].x - ruHead[k][j][i].x);
@@ -185,6 +185,18 @@ advance(mesh::accessor<ro> m,
       } // for
     } // for
   } // for
+
+  /*--------------------------------------------------------------------------*
+    Reconstruct faces from intermediates.
+   *--------------------------------------------------------------------------*/
+
+  for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
+      for(auto i : m.cells<mesh::x_axis, mesh::corrector>()) {
+      } // for
+    } // for
+  } // for
+
 } // advance
 
 } // namespace muscl::tasks

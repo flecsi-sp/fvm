@@ -16,7 +16,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
 
   enum index_space { cells };
   using index_spaces = has<cells>;
-  enum domain { quantities, slopes, all, global };
+  enum domain { quantities, predictor, corrector, all, global };
   enum axis { x_axis, y_axis, z_axis };
   using axes = has<x_axis, y_axis, z_axis>;
   enum boundary { low, high };
@@ -53,8 +53,11 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
       if constexpr(DM == quantities) {
         return B::template size<mesh::cells, A, base::domain::logical>();
       }
-      else if constexpr(DM == slopes) {
+      else if constexpr(DM == predictor) {
         return B::template size<mesh::cells, A, base::domain::logical>() + 2;
+      }
+      else if constexpr(DM == corrector) {
+        return B::template size<mesh::cells, A, base::domain::logical>() + 1;
       }
       else if constexpr(DM == all) {
         return B::template size<mesh::cells, A, base::domain::all>();
@@ -69,10 +72,15 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
       if constexpr(DM == quantities) {
         return B::template range<mesh::cells, A, base::domain::logical>();
       }
-      else if constexpr(slopes) {
+      else if constexpr(DM == predictor) {
         return flecsi::topo::make_ids<mesh::cells>(
           flecsi::util::iota_view<flecsi::util::id>(
             1, B::template size<mesh::cells, A, base::domain::all>() - 1));
+      }
+      else if constexpr(DM == corrector) {
+        return flecsi::topo::make_ids<mesh::cells>(
+          flecsi::util::iota_view<flecsi::util::id>(
+            2, B::template size<mesh::cells, A, base::domain::all>() - 1));
       }
       else if constexpr(DM == all) {
         return B::template range<mesh::cells, A, base::domain::all>();
