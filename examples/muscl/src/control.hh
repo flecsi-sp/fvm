@@ -34,12 +34,13 @@ struct control_policy : flecsi::run::control_base {
   using control = flecsi::run::control<control_policy>;
 
   void
-  init(double t0, double tf, std::size_t max_steps, double cfl, double max_dt) {
+  init(double t0, double tf, std::size_t max_steps, double cfl, double max_dt, std::size_t log_modulus) {
     t_ = t0;
     tf_ = tf;
     max_steps_ = max_steps;
     cfl_ = cfl;
     max_dt_ = max_dt;
+    log_modulus_ = log_modulus;
   } // init
 
   auto & dtmin() {
@@ -54,7 +55,10 @@ struct control_policy : flecsi::run::control_base {
     cp.dt_ = cp.cfl_ * cp.dtmin_.get();
     cp.t_ += cp.dt_;
     ++cp.step_;
-    flog(info) << "step: " << cp.step_ << " dt: " << cp.dt_ << std::endl;
+    if((cp.step_ % 10) == 0) {
+      flog(info) << "step: " << cp.step_ << " dt: " << cp.dt_ << std::endl;
+      flecsi::flog::flush();
+    }
     return cp.step_ < cp.max_steps_ && cp.dt_ < cp.max_dt_;
   } // cycle_control
 
@@ -71,6 +75,7 @@ private:
   double cfl_;
   double dt_;
   double max_dt_;
+  std::size_t log_modulus_;
   flecsi::future<double> dtmin_;
 }; // struct control_policy
 

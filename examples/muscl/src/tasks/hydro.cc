@@ -64,7 +64,8 @@ muscl::tasks::hydro::update_eigenvalues(mesh::accessor<ro> m,
 } // update_eigenvalues
 
 double
-muscl::tasks::hydro::update_dtmin(mesh::accessor<ro> m, single<velocity>::accessor<ro> lmax) {
+muscl::tasks::hydro::update_dtmin(mesh::accessor<ro> m,
+  single<velocity>::accessor<ro> lmax) {
   return std::min(m.delta<mesh::x_axis>() / lmax->x,
     std::min(
       m.delta<mesh::y_axis>() / lmax->y, m.delta<mesh::z_axis>() / lmax->z));

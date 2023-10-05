@@ -575,18 +575,18 @@ advance(mesh::accessor<ro> m,
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           dr_ds[k][j][i] =
-            slope_factor * L::limit(r[k-1][j][i], r[k][j][i], r[k+1][j][i]);
+            slope_factor * L::limit(r[k - 1][j][i], r[k][j][i], r[k + 1][j][i]);
           du_ds[k][j][i].x =
             slope_factor *
-            L::limit(u[k-1][j][i].x, u[k][j][i].x, u[k+1][j][i].x);
+            L::limit(u[k - 1][j][i].x, u[k][j][i].x, u[k + 1][j][i].x);
           du_ds[k][j][i].y =
             slope_factor *
-            L::limit(u[k-1][j][i].y, u[k][j][i].y, u[k+1][j][i].y);
+            L::limit(u[k - 1][j][i].y, u[k][j][i].y, u[k + 1][j][i].y);
           du_ds[k][j][i].z =
             slope_factor *
-            L::limit(u[k-1][j][i].z, u[k][j][i].z, u[k+1][j][i].z);
+            L::limit(u[k - 1][j][i].z, u[k][j][i].z, u[k + 1][j][i].z);
           dp_ds[k][j][i] =
-            slope_factor * L::limit(p[k-1][j][i], p[k][j][i], p[k+1][j][i]);
+            slope_factor * L::limit(p[k - 1][j][i], p[k][j][i], p[k + 1][j][i]);
         } // for
       } // for
     } // for
@@ -692,18 +692,18 @@ advance(mesh::accessor<ro> m,
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           // Primitive quantities
-          rTail[k][j][i] = q[k-1][j][i] + extrap_factor * dr_ds[k-1][j][i];
+          rTail[k][j][i] = q[k - 1][j][i] + extrap_factor * dr_ds[k - 1][j][i];
           rHead[k][j][i] = q[k][j][i] - extrap_factor * dr_ds[k][j][i];
           uTail[k][j][i].x =
-            u[k-1][j][i].x + extrap_factor * du_ds[k-1][j][i].x;
+            u[k - 1][j][i].x + extrap_factor * du_ds[k - 1][j][i].x;
           uHead[k][j][i].x = u[k][j][i].x - extrap_factor * du_ds[k][j][i].x;
           uTail[k][j][i].y =
-            u[k-1][j][i].y + extrap_factor * du_ds[k-1][j][i].y;
+            u[k - 1][j][i].y + extrap_factor * du_ds[k - 1][j][i].y;
           uHead[k][j][i].y = u[k][j][i].y - extrap_factor * du_ds[k][j][i].y;
           uTail[k][j][i].z =
-            u[k-1][j][i].z + extrap_factor * du_ds[k-1][j][i].z;
+            u[k - 1][j][i].z + extrap_factor * du_ds[k - 1][j][i].z;
           uHead[k][j][i].z = u[k][j][i].z - extrap_factor * du_ds[k][j][i].z;
-          pTail[k][j][i] = p[k-1][j][i] + extrap_factor * dp_ds[k-1][j][i];
+          pTail[k][j][i] = p[k - 1][j][i] + extrap_factor * dp_ds[k - 1][j][i];
           pHead[k][j][i] = p[k][j][i] - extrap_factor * dp_ds[k][j][i];
 
           // Conserved quantities
@@ -794,15 +794,15 @@ advance(mesh::accessor<ro> m,
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[k][j][i] =
-            r[k][j][i] - update_factor * (rF[k+1][j][i] - rF[k][j][i]);
+            r[k][j][i] - update_factor * (rF[k + 1][j][i] - rF[k][j][i]);
           ru[k][j][i].x = ru[k][j][i].x -
-                          update_factor * (ruF[k+1][j][i].x - ruF[k][j][i].x);
+                          update_factor * (ruF[k + 1][j][i].x - ruF[k][j][i].x);
           ru[k][j][i].y = ru[k][j][i].y -
-                          update_factor * (ruF[k+1][j][i].y - ruF[k][j][i].y);
+                          update_factor * (ruF[k + 1][j][i].y - ruF[k][j][i].y);
           ru[k][j][i].z = ru[k][j][i].z -
-                          update_factor * (ruF[k+1][j][i].z - ruF[k][j][i].z);
+                          update_factor * (ruF[k + 1][j][i].z - ruF[k][j][i].z);
           rE[k][j][i] =
-            rE[k][j][i] - update_factor * (rEF[k+1][j][i] - rEF[k][j][i]);
+            rE[k][j][i] - update_factor * (rEF[k + 1][j][i] - rEF[k][j][i]);
         } // for
       } // for
     } // for

@@ -98,8 +98,6 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
 
     template<axis A>
     FLECSI_INLINE_TARGET double delta() const {
-      static_assert(A == x_axis || A == y_axis || A == z_axis, "invalid axis");
-
       if constexpr(A == x_axis) {
         return this->policy_meta().xdelta;
       }
@@ -160,6 +158,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     Initialization.
    *--------------------------------------------------------------------------*/
 
+  // FIXME: colors != processes
   static void set_geometry(mesh::accessor<flecsi::rw> sm, grect const & g) {
     sm.set_geometry((g[0][1] - g[0][0]) / sm.size<x_axis, quantities>(),
       (g[1][1] - g[1][0]) / sm.size<y_axis, quantities>(),

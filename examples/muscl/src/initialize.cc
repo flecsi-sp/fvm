@@ -23,7 +23,8 @@ action::initialize(control_policy & cp) {
     config["tf"].as<double>(),
     config["max_steps"].as<std::size_t>(),
     config["cfl"].as<double>(),
-    config["max_dt"].as<double>());
+    config["max_dt"].as<double>(),
+    config["log_modulus"].as<std::size_t>());
 
   /*--------------------------------------------------------------------------*
     Set mesh resolution.

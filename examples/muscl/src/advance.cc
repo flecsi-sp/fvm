@@ -1,8 +1,8 @@
 #include "advance.hh"
 #include "limiter.hh"
 #include "state.hh"
-#include "tasks/hydro.hh"
 #include "tasks/boundary.hh"
+#include "tasks/hydro.hh"
 
 #include <flecsi/execution.hh>
 

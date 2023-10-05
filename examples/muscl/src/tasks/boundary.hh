@@ -15,13 +15,12 @@ apply_boundaries(mesh::accessor<ro> m,
 
   {
     const auto xlow = bm[0][0];
-    if(xlow == mesh::boundary_type::inflow) {
-      inflow<mesh::x_axis, mesh::low>(m, ra, rua, rEa);
-    }
-    else if(xlow == mesh::boundary_type::outflow) {
-      inflow<mesh::x_axis, mesh::low>(m, ra, rua, rEa);
+    if(xlow == mesh::boundary_type::inflow ||
+       xlow == mesh::boundary_type::outflow) {
+      flow<mesh::x_axis, mesh::low>(m, ra, rua, rEa);
     }
     else if(xlow == mesh::boundary_type::reflecting) {
+      reflecting<mesh::x_axis, mesh::low>(m, ra, rua, rEa);
     }
     else { /* periodic */
     } // if
@@ -29,13 +28,12 @@ apply_boundaries(mesh::accessor<ro> m,
 
   {
     const auto xhigh = bm[0][1];
-    if(xhigh == mesh::boundary_type::inflow) {
-      inflow<mesh::x_axis, mesh::high>(m, ra, rua, rEa);
-    }
-    else if(xhigh == mesh::boundary_type::outflow) {
-      inflow<mesh::x_axis, mesh::high>(m, ra, rua, rEa);
+    if(xhigh == mesh::boundary_type::inflow ||
+       xhigh == mesh::boundary_type::outflow) {
+      flow<mesh::x_axis, mesh::high>(m, ra, rua, rEa);
     }
     else if(xhigh == mesh::boundary_type::reflecting) {
+      reflecting<mesh::x_axis, mesh::high>(m, ra, rua, rEa);
     }
     else { /* periodic */
     } // if
@@ -43,13 +41,12 @@ apply_boundaries(mesh::accessor<ro> m,
 
   {
     const auto ylow = bm[1][0];
-    if(ylow == mesh::boundary_type::inflow) {
-      inflow<mesh::y_axis, mesh::low>(m, ra, rua, rEa);
-    }
-    else if(ylow == mesh::boundary_type::outflow) {
-      inflow<mesh::y_axis, mesh::low>(m, ra, rua, rEa);
+    if(ylow == mesh::boundary_type::inflow ||
+       ylow == mesh::boundary_type::outflow) {
+      flow<mesh::y_axis, mesh::low>(m, ra, rua, rEa);
     }
     else if(ylow == mesh::boundary_type::reflecting) {
+      reflecting<mesh::y_axis, mesh::low>(m, ra, rua, rEa);
     }
     else { /* periodic */
     } // if
@@ -57,13 +54,12 @@ apply_boundaries(mesh::accessor<ro> m,
 
   {
     const auto yhigh = bm[1][1];
-    if(yhigh == mesh::boundary_type::inflow) {
-      inflow<mesh::y_axis, mesh::high>(m, ra, rua, rEa);
-    }
-    else if(yhigh == mesh::boundary_type::outflow) {
-      inflow<mesh::y_axis, mesh::high>(m, ra, rua, rEa);
+    if(yhigh == mesh::boundary_type::inflow ||
+       yhigh == mesh::boundary_type::outflow) {
+      flow<mesh::y_axis, mesh::high>(m, ra, rua, rEa);
     }
     else if(yhigh == mesh::boundary_type::reflecting) {
+      reflecting<mesh::y_axis, mesh::high>(m, ra, rua, rEa);
     }
     else { /* periodic */
     } // if
@@ -71,13 +67,12 @@ apply_boundaries(mesh::accessor<ro> m,
 
   {
     const auto zlow = bm[2][0];
-    if(zlow == mesh::boundary_type::inflow) {
-      inflow<mesh::z_axis, mesh::low>(m, ra, rua, rEa);
-    }
-    else if(zlow == mesh::boundary_type::outflow) {
-      inflow<mesh::z_axis, mesh::low>(m, ra, rua, rEa);
+    if(zlow == mesh::boundary_type::inflow ||
+       zlow == mesh::boundary_type::outflow) {
+      flow<mesh::z_axis, mesh::low>(m, ra, rua, rEa);
     }
     else if(zlow == mesh::boundary_type::reflecting) {
+      reflecting<mesh::z_axis, mesh::low>(m, ra, rua, rEa);
     }
     else { /* periodic */
     } // if
@@ -85,13 +80,12 @@ apply_boundaries(mesh::accessor<ro> m,
 
   {
     const auto zhigh = bm[2][1];
-    if(zhigh == mesh::boundary_type::inflow) {
-      inflow<mesh::z_axis, mesh::high>(m, ra, rua, rEa);
-    }
-    else if(zhigh == mesh::boundary_type::outflow) {
-      inflow<mesh::z_axis, mesh::high>(m, ra, rua, rEa);
+    if(zhigh == mesh::boundary_type::inflow ||
+       zhigh == mesh::boundary_type::outflow) {
+      flow<mesh::z_axis, mesh::high>(m, ra, rua, rEa);
     }
     else if(zhigh == mesh::boundary_type::reflecting) {
+      reflecting<mesh::z_axis, mesh::high>(m, ra, rua, rEa);
     }
     else { /* periodic */
     } // if
