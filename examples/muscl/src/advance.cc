@@ -58,6 +58,8 @@ action::advance(control_policy & cp) {
   execute<tasks::apply_boundaries>(m, bmap(gt), r(m), ru(m), rE(m));
   execute<tasks::hydro::update_primitives>(
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
+  execute<tasks::hydro::update_eigenvalues>(
+    m, r(m), u(m), p(m), lmax(ct), gamma(gt));
 
   cp.dtmin() = reduce<tasks::hydro::update_dtmin, exec::fold::min>(m, lmax(ct));
 } // action::advance

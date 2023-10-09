@@ -4,7 +4,7 @@ gamma: 1.4
 t0: 0.0
 tf: 1.0
 max_steps: 100
-cfl: 0.9
+cfl: 0.2
 max_dt: 0.5
 log_modulus: 5
 coords:

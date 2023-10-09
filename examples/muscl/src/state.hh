@@ -5,23 +5,41 @@
 
 namespace muscl {
 
+/*----------------------------------------------------------------------------*
+  Topology slots.
+ *----------------------------------------------------------------------------*/
+
 inline mesh::slot m;
-inline index::slot ct; /* color topology */
+inline index::slot ct; /* Color topology. */
+
+// Convenience slot (shorter name) using flecsi's global topology instance.
 inline global::slot & gt = flecsi::global_topology;
 
-// Time parameters.
+/*----------------------------------------------------------------------------*
+  Color parameters (One per color using an index topology instance).
+ *----------------------------------------------------------------------------*/
+
 inline const single<double>::definition<flecsi::topo::index> t;
 inline const single<double>::definition<flecsi::topo::index> dt;
+
+/* Maximum velocity for a color. */
 inline const single<velocity>::definition<flecsi::topo::index> lmax;
 
-// Globals.
+/*----------------------------------------------------------------------------*
+  Global parameters.
+ *----------------------------------------------------------------------------*/
+
 inline const single<mesh::bmap>::definition<flecsi::topo::global> bmap;
 inline const single<double>::definition<flecsi::topo::global> gamma;
 
+/*----------------------------------------------------------------------------*
+  Mesh fields.
+ *----------------------------------------------------------------------------*/
+
 // Conserved quantities.
-inline const field<double>::definition<mesh, mesh::cells> r;
-inline const field<velocity>::definition<mesh, mesh::cells> ru;
-inline const field<double>::definition<mesh, mesh::cells> rE;
+inline const field<double>::definition<mesh, mesh::cells> r; /* density */
+inline const field<velocity>::definition<mesh, mesh::cells> ru; /* momentum */
+inline const field<double>::definition<mesh, mesh::cells> rE; /* total energy */
 
 // Primitives.
 inline const field<velocity>::definition<mesh, mesh::cells> u;
