@@ -44,12 +44,12 @@ action::initialize(control_policy & cp) {
    *--------------------------------------------------------------------------*/
 
   execute<tasks::init::boundaries>(bmap(gt),
-    utils::mesh_boundary(config["boundary"]["xlow"].as<std::string>()),
-    utils::mesh_boundary(config["boundary"]["xhigh"].as<std::string>()),
-    utils::mesh_boundary(config["boundary"]["ylow"].as<std::string>()),
-    utils::mesh_boundary(config["boundary"]["yhigh"].as<std::string>()),
-    utils::mesh_boundary(config["boundary"]["zlow"].as<std::string>()),
-    utils::mesh_boundary(config["boundary"]["zhigh"].as<std::string>()));
+    utils::mesh_boundary(config["boundaries"]["xlow"].as<std::string>()),
+    utils::mesh_boundary(config["boundaries"]["xhigh"].as<std::string>()),
+    utils::mesh_boundary(config["boundaries"]["ylow"].as<std::string>()),
+    utils::mesh_boundary(config["boundaries"]["yhigh"].as<std::string>()),
+    utils::mesh_boundary(config["boundaries"]["zlow"].as<std::string>()),
+    utils::mesh_boundary(config["boundaries"]["zhigh"].as<std::string>()));
 
   /*--------------------------------------------------------------------------*
     Topology allocations.

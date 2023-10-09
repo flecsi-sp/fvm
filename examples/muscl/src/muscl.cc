@@ -1,4 +1,5 @@
 #include "advance.hh"
+#include "analyze.hh"
 #include "control.hh"
 #include "initialize.hh"
 

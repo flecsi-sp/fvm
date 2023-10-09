@@ -16,6 +16,7 @@ find_package(yaml-cpp REQUIRED)
 
 add_executable(muscl
   src/advance.cc
+  src/analyze.cc
   src/initialize.cc
   src/muscl.cc
   src/tasks/hydro.cc

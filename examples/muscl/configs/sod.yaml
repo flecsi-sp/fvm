@@ -2,15 +2,15 @@
 problem: sod
 gamma: 1.4
 t0: 0.0
-tf: 0.1
+tf: 1.0
 max_steps: 100
 cfl: 0.9
 max_dt: 0.5
-log_modulus: 1
+log_modulus: 5
 coords:
   - [0.0, 0.0, 0.0]
   - [1.0, 1.0, 1.0]
-boundary:
+boundaries:
   xlow: reflecting
   xhigh: reflecting
   ylow: inflow

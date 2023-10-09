@@ -33,8 +33,12 @@ struct control_policy : flecsi::run::control_base {
   struct node_policy {};
   using control = flecsi::run::control<control_policy>;
 
-  void
-  init(double t0, double tf, std::size_t max_steps, double cfl, double max_dt, std::size_t log_modulus) {
+  void init(double t0,
+    double tf,
+    std::size_t max_steps,
+    double cfl,
+    double max_dt,
+    std::size_t log_modulus) {
     t_ = t0;
     tf_ = tf;
     max_steps_ = max_steps;
@@ -53,13 +57,15 @@ struct control_policy : flecsi::run::control_base {
 
   static bool cycle_control(control_policy & cp) {
     cp.dt_ = cp.cfl_ * cp.dtmin_.get();
+    cp.dt_ = cp.t_ + cp.dt_ > cp.tf_ ? cp.tf_ - cp.t_ : cp.dt_;
     cp.t_ += cp.dt_;
     ++cp.step_;
-    if((cp.step_ % 10) == 0) {
-      flog(info) << "step: " << cp.step_ << " dt: " << cp.dt_ << std::endl;
+    if((cp.step_ % cp.log_modulus_) == 0 || cp.t_ == cp.tf_) {
+      flog(info) << "step: " << cp.step_ << " time: " << cp.t_
+                 << " dt: " << cp.dt_ << std::endl;
       flecsi::flog::flush();
     }
-    return cp.step_ < cp.max_steps_ && cp.dt_ < cp.max_dt_;
+    return cp.step_ < cp.max_steps_ && cp.t_ < cp.tf_ && cp.dt_ < cp.max_dt_;
   } // cycle_control
 
   using evolve = cycle<cycle_control, point<cp::advance>, point<cp::analyze>>;
