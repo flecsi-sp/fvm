@@ -19,9 +19,6 @@ inline global::slot & gt = flecsi::global_topology;
   Color parameters (One per color using an index topology instance).
  *----------------------------------------------------------------------------*/
 
-inline const single<double>::definition<flecsi::topo::index> t;
-inline const single<double>::definition<flecsi::topo::index> dt;
-
 /* Maximum velocity for a color. */
 inline const single<velocity>::definition<flecsi::topo::index> lmax;
 

@@ -56,6 +56,7 @@ struct control_policy : flecsi::run::control_base {
   }
 
   static bool cycle_control(control_policy & cp) {
+    auto dtmin = cp.dtmin_.get();
     cp.dt_ = cp.cfl_ * cp.dtmin_.get();
     cp.dt_ = cp.t_ + cp.dt_ > cp.tf_ ? cp.tf_ - cp.t_ : cp.dt_;
     cp.t_ += cp.dt_;

@@ -70,21 +70,23 @@ muscl::tasks::init::sod(mesh::accessor<ro> m,
 
         if(x < sodx0) {
           r[k][j][i] = sodrL;
-          ru[k][j][i].x = soduL;
-          ru[k][j][i].y = sodvL;
-          ru[k][j][i].z = sodwL;
+          ru[k][j][i].x = sodrL * soduL;
+          ru[k][j][i].y = sodrL * sodvL;
+          ru[k][j][i].z = sodrL * sodwL;
           rE[k][j][i] =
             mult * sodpL +
-            0.5 * sodrL * (soduL * soduL + sodvL * sodvL + sodwL * sodwL);
+            0.5 * sodrL *
+              (utils::sqr(soduL) + utils::sqr(sodvL) + utils::sqr(sodwL));
         }
         else {
           r[k][j][i] = sodrR;
-          ru[k][j][i].x = soduR;
-          ru[k][j][i].y = sodvR;
-          ru[k][j][i].z = sodwR;
+          ru[k][j][i].x = sodrR * soduR;
+          ru[k][j][i].y = sodrR * sodvR;
+          ru[k][j][i].z = sodrR * sodwR;
           rE[k][j][i] =
             mult * sodpR +
-            0.5 * sodrR * (soduR * soduR + sodvR * sodvR + sodwR * sodwR);
+            0.5 * sodrR *
+              (utils::sqr(soduR) + utils::sqr(sodvR) + utils::sqr(sodwR));
         } // if
       } // for
     } // for

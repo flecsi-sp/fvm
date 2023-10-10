@@ -160,9 +160,9 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
 
   // FIXME: colors != processes
   static void set_geometry(mesh::accessor<flecsi::rw> sm, grect const & g) {
-    sm.set_geometry((g[0][1] - g[0][0]) / sm.size<x_axis, quantities>(),
-      (g[1][1] - g[1][0]) / sm.size<y_axis, quantities>(),
-      (g[2][1] - g[2][0]) / sm.size<z_axis, quantities>());
+    sm.set_geometry((g[0][1] - g[0][0]) / sm.size<x_axis, global>(),
+      (g[1][1] - g[1][0]) / sm.size<y_axis, global>(),
+      (g[2][1] - g[2][0]) / sm.size<z_axis, global>());
   } // set_geometry
 
   static void initialize(flecsi::data::topology_slot<mesh> & s,
