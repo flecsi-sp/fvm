@@ -114,7 +114,7 @@ action::initialize(control_policy & cp) {
 
   execute<tasks::apply_boundaries>(m, bmap(gt), r(m), ru(m), rE(m));
 
-#if 0 // FIXME: Debug
+#if 1 // FIXME: Debug
   execute<tasks::util::print_conserved<mesh::domain::all>>(
     m, r(m), ru(m), rE(m), 2);
 #endif
@@ -122,7 +122,7 @@ action::initialize(control_policy & cp) {
   execute<tasks::hydro::update_primitives>(
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
 
-#if 0 // FIXME: Debug
+#if 1 // FIXME: Debug
   execute<tasks::util::print_primitives<mesh::domain::all>>(m, u(m), p(m), 2);
 #endif
 
