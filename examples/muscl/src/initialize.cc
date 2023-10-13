@@ -75,6 +75,31 @@ action::initialize(control_policy & cp) {
     m.allocate(coloring.get(), geom);
   } // scope
 
+#if 1
+  /*--------------------------------------------------------------------------*
+    Fake initialization to avoid legion warnings.
+   *--------------------------------------------------------------------------*/
+
+  // clang-format off
+  execute<tasks::init::touch>(m,
+    r(m), ru(m), rE(m),
+    u(m), p(m),
+    q(m), qu(m), qE(m),
+    dr_ds(m), du_ds(m), dp_ds(m),
+    rTail(m), ruTail(m), rETail(m), uTail(m), pTail(m),
+    rHead(m), ruHead(m), rEHead(m), uHead(m), pHead(m),
+    rF(m), ruF(m), rEF(m));
+  execute<tasks::init::touch1>(m,
+    r(m), ru(m), rE(m),
+    u(m), p(m),
+    q(m), qu(m), qE(m),
+    dr_ds(m), du_ds(m), dp_ds(m),
+    rTail(m), ruTail(m), rETail(m), uTail(m), pTail(m),
+    rHead(m), ruHead(m), rEHead(m), uHead(m), pHead(m),
+    rF(m), ruF(m), rEF(m));
+  // clang-format on
+#endif
+
   /*--------------------------------------------------------------------------*
     Initialize problem state.
    *--------------------------------------------------------------------------*/
@@ -87,9 +112,22 @@ action::initialize(control_policy & cp) {
       "unsupported problem(" << config["problem"].as<std::string>() << ")");
   } // if
 
+  execute<tasks::apply_boundaries>(m, bmap(gt), r(m), ru(m), rE(m));
+
+#if 0 // FIXME: Debug
+  execute<tasks::util::print_conserved<mesh::domain::all>>(
+    m, r(m), ru(m), rE(m), 2);
+#endif
+
   execute<tasks::hydro::update_primitives>(
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
+
+#if 0 // FIXME: Debug
+  execute<tasks::util::print_primitives<mesh::domain::all>>(m, u(m), p(m), 2);
+#endif
+
   execute<tasks::hydro::update_eigenvalues>(
     m, r(m), u(m), p(m), lmax(ct), gamma(gt));
+
   cp.dtmin() = reduce<tasks::hydro::update_dtmin, exec::fold::min>(m, lmax(ct));
 } // action::initialize

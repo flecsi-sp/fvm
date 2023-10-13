@@ -24,39 +24,39 @@ void update_eigenvalues(mesh::accessor<ro> m,
 
 double update_dtmin(mesh::accessor<ro> m, single<vec3>::accessor<ro> lmax);
 
-#define DEBUG_PRINT(Ms, Mm, Mr, Mru, MrE) \
-  { \
-    std::stringstream ss; \
-    ss << Ms << std::endl; \
-    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) { \
-      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) { \
-        ss << Mr[2][j][i] << " "; \
-      } \
-      ss << std::endl; \
-    } \
-    flog(info) << ss.str() << std::endl; \
-  } \
-  { \
-    std::stringstream ss; \
-    ss << Ms << std::endl; \
-    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) { \
-      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) { \
-        ss << Mru[2][j][i] << " "; \
-      } \
-      ss << std::endl; \
-    } \
-    flog(info) << ss.str() << std::endl; \
-  } \
-  { \
-    std::stringstream ss; \
-    ss << Ms << std::endl; \
-    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) { \
-      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) { \
-        ss << MrE[2][j][i] << " "; \
-      } \
-      ss << std::endl; \
-    } \
-    flog(info) << ss.str() << std::endl; \
+#define DEBUG_PRINT(Ms, Mm, Mr, Mru, MrE)                                      \
+  {                                                                            \
+    std::stringstream ss;                                                      \
+    ss << Ms << std::endl;                                                     \
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {                  \
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) {                 \
+        ss << Mr[2][j][i] << " ";                                              \
+      }                                                                        \
+      ss << std::endl;                                                         \
+    }                                                                          \
+    flog(info) << ss.str() << std::endl;                                       \
+  }                                                                            \
+  {                                                                            \
+    std::stringstream ss;                                                      \
+    ss << Ms << std::endl;                                                     \
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {                  \
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) {                 \
+        ss << Mru[2][j][i] << " ";                                             \
+      }                                                                        \
+      ss << std::endl;                                                         \
+    }                                                                          \
+    flog(info) << ss.str() << std::endl;                                       \
+  }                                                                            \
+  {                                                                            \
+    std::stringstream ss;                                                      \
+    ss << Ms << std::endl;                                                     \
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {                  \
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) {                 \
+        ss << MrE[2][j][i] << " ";                                             \
+      }                                                                        \
+      ss << std::endl;                                                         \
+    }                                                                          \
+    flog(info) << ss.str() << std::endl;                                       \
   }
 
 template<mesh::axis A, typename L>

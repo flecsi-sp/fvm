@@ -58,6 +58,10 @@ struct control_policy : flecsi::run::control_base {
   static bool cycle_control(control_policy & cp) {
     bool exec_cycle = cp.step_ < cp.max_steps_ && cp.t_ < cp.tf_;
 
+#if 0 // FIXME: Debug
+    flog(warn) << "dtmin: " << cp.dtmin_.get() << std::endl;
+#endif
+
     cp.dt_ = cp.cfl_ * cp.dtmin_.get();
     cp.dt_ = cp.t_ + cp.dt_ > cp.tf_ ? cp.tf_ - cp.t_ : cp.dt_;
     cp.dt_ = std::min(cp.dt_, cp.max_dt_);
