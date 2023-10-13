@@ -38,13 +38,13 @@ struct control_policy : flecsi::run::control_base {
     std::size_t max_steps,
     double cfl,
     double max_dt,
-    std::size_t log_modulus) {
+    std::size_t log_frequency) {
     t_ = t0;
     tf_ = tf;
     max_steps_ = max_steps;
     cfl_ = cfl;
     max_dt_ = max_dt;
-    log_modulus_ = log_modulus;
+    log_frequency_ = log_frequency;
   } // init
 
   auto & dtmin() {
@@ -56,17 +56,23 @@ struct control_policy : flecsi::run::control_base {
   }
 
   static bool cycle_control(control_policy & cp) {
-    auto dtmin = cp.dtmin_.get();
+    bool exec_cycle = cp.step_ < cp.max_steps_ && cp.t_ < cp.tf_;
+
     cp.dt_ = cp.cfl_ * cp.dtmin_.get();
     cp.dt_ = cp.t_ + cp.dt_ > cp.tf_ ? cp.tf_ - cp.t_ : cp.dt_;
-    cp.t_ += cp.dt_;
-    ++cp.step_;
-    if((cp.step_ % cp.log_modulus_) == 0 || cp.t_ == cp.tf_) {
+    cp.dt_ = std::min(cp.dt_, cp.max_dt_);
+
+    if((cp.step_ % cp.log_frequency_) == 0 || cp.step_ == cp.max_steps_ ||
+       cp.t_ == cp.tf_) {
       flog(info) << "step: " << cp.step_ << " time: " << cp.t_
                  << " dt: " << cp.dt_ << std::endl;
       flecsi::flog::flush();
-    }
-    return cp.step_ < cp.max_steps_ && cp.t_ < cp.tf_ && cp.dt_ < cp.max_dt_;
+    } // if
+
+    cp.t_ += cp.dt_;
+    ++cp.step_;
+
+    return exec_cycle;
   } // cycle_control
 
   using evolve = cycle<cycle_control, point<cp::advance>, point<cp::analyze>>;
@@ -82,7 +88,7 @@ private:
   double cfl_;
   double dt_;
   double max_dt_;
-  std::size_t log_modulus_;
+  std::size_t log_frequency_;
   flecsi::future<double> dtmin_;
 }; // struct control_policy
 
