@@ -4,9 +4,9 @@ gamma: 1.4
 t0: 0.0
 tf: 1.0
 max_steps: 100
-cfl: 0.2
-max_dt: 0.5
-log_modulus: 5
+cfl: 0.6
+max_dt: 1.0
+log_frequency: 1
 coords:
   - [0.0, 0.0, 0.0]
   - [1.0, 1.0, 1.0]

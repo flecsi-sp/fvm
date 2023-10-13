@@ -4,6 +4,7 @@
 #include "tasks/boundary.hh"
 #include "tasks/hydro.hh"
 #include "tasks/initialize.hh"
+#include "tasks/utils.hh"
 
 #include <flecsi/flog.hh>
 #include <yaml-cpp/yaml.h>
@@ -24,7 +25,7 @@ action::initialize(control_policy & cp) {
     config["max_steps"].as<std::size_t>(),
     config["cfl"].as<double>(),
     config["max_dt"].as<double>(),
-    config["log_modulus"].as<std::size_t>());
+    config["log_frequency"].as<std::size_t>());
 
   /*--------------------------------------------------------------------------*
     Set mesh resolution.
@@ -86,7 +87,6 @@ action::initialize(control_policy & cp) {
       "unsupported problem(" << config["problem"].as<std::string>() << ")");
   } // if
 
-  execute<tasks::apply_boundaries>(m, bmap(gt), r(m), ru(m), rE(m));
   execute<tasks::hydro::update_primitives>(
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
   execute<tasks::hydro::update_eigenvalues>(
