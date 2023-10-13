@@ -9,7 +9,7 @@ inline void
 apply_boundaries(mesh::accessor<ro> m,
   single<mesh::bmap>::accessor<ro> bmap_a,
   field<double>::accessor<rw, ro> ra,
-  field<velocity>::accessor<rw, ro> rua,
+  field<vec3>::accessor<rw, ro> rua,
   field<double>::accessor<rw, ro> rEa) {
   const mesh::bmap & bm = *bmap_a;
 

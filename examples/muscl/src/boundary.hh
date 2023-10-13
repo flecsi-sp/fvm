@@ -9,7 +9,7 @@ template<mesh::axis A, mesh::boundary B>
 void
 flow(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
-  field<velocity>::accessor<rw, ro> ru_a,
+  field<vec3>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a) {
   auto r = m.mdspan<mesh::cells>(r_a);
   auto ru = m.mdspan<mesh::cells>(ru_a);
@@ -126,7 +126,7 @@ template<mesh::axis A, mesh::boundary B>
 void
 reflecting(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
-  field<velocity>::accessor<rw, ro> ru_a,
+  field<vec3>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a) {
   auto r = m.mdspan<mesh::cells>(r_a);
   auto ru = m.mdspan<mesh::cells>(ru_a);

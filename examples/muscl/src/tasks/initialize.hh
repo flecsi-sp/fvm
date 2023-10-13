@@ -17,7 +17,7 @@ void boundaries(single<mesh::bmap>::accessor<wo> bmap_a,
 
 void sod(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
-  field<velocity>::accessor<rw, ro> ru_a,
+  field<vec3>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a,
   single<double>::accessor<ro> gamma_a);
 

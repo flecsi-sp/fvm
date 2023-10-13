@@ -17,9 +17,15 @@ using field = flecsi::field<T, L>;
 template<typename T>
 using single = field<T, flecsi::data::single>;
 
-struct velocity {
+struct vec3 {
   double x, y, z;
 };
+
+inline std::ostream &
+operator<<(std::ostream & s, vec3 const & v) {
+  s << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+  return s;
+} // operator<<
 
 } // namespace muscl
 

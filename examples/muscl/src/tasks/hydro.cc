@@ -5,9 +5,9 @@
 void
 muscl::tasks::hydro::update_primitives(mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> r_a,
-  field<velocity>::accessor<ro, ro> ru_a,
+  field<vec3>::accessor<ro, ro> ru_a,
   field<double>::accessor<ro, ro> rE_a,
-  field<velocity>::accessor<wo, ro> u_a,
+  field<vec3>::accessor<wo, ro> u_a,
   field<double>::accessor<wo, ro> p_a,
   single<double>::accessor<ro> gamma_a) {
   auto r = m.mdspan<mesh::cells>(r_a);
@@ -37,9 +37,9 @@ muscl::tasks::hydro::update_primitives(mesh::accessor<ro> m,
 void
 muscl::tasks::hydro::update_eigenvalues(mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> r_a,
-  field<velocity>::accessor<wo, ro> u_a,
+  field<vec3>::accessor<wo, ro> u_a,
   field<double>::accessor<wo, ro> p_a,
-  single<velocity>::accessor<wo> lmax_a,
+  single<vec3>::accessor<wo> lmax_a,
   single<double>::accessor<ro> gamma_a) {
   auto r = m.mdspan<mesh::cells>(r_a);
   auto u = m.mdspan<mesh::cells>(u_a);
@@ -65,7 +65,7 @@ muscl::tasks::hydro::update_eigenvalues(mesh::accessor<ro> m,
 
 double
 muscl::tasks::hydro::update_dtmin(mesh::accessor<ro> m,
-  single<velocity>::accessor<ro> lmax) {
+  single<vec3>::accessor<ro> lmax) {
   return std::min(m.delta<mesh::x_axis>() / lmax->x,
     std::min(
       m.delta<mesh::y_axis>() / lmax->y, m.delta<mesh::z_axis>() / lmax->z));

@@ -3,52 +3,88 @@
 
 #include "../state.hh"
 #include "../utils.hh"
+#include "utils.hh"
 
 namespace muscl::tasks::hydro {
 
 void update_primitives(mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> r_a,
-  field<velocity>::accessor<ro, ro> ru_a,
+  field<vec3>::accessor<ro, ro> ru_a,
   field<double>::accessor<ro, ro> rE_a,
-  field<velocity>::accessor<wo, ro> u_a,
+  field<vec3>::accessor<wo, ro> u_a,
   field<double>::accessor<wo, ro> p_a,
   single<double>::accessor<ro> gamma_a);
 
 void update_eigenvalues(mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> r_a,
-  field<velocity>::accessor<wo, ro> u_a,
+  field<vec3>::accessor<wo, ro> u_a,
   field<double>::accessor<wo, ro> p_a,
-  single<velocity>::accessor<wo> lmax_a,
+  single<vec3>::accessor<wo> lmax_a,
   single<double>::accessor<ro> gamma_a);
 
-double update_dtmin(mesh::accessor<ro> m, single<velocity>::accessor<ro> lmax);
+double update_dtmin(mesh::accessor<ro> m, single<vec3>::accessor<ro> lmax);
+
+#define DEBUG_PRINT(Ms, Mm, Mr, Mru, MrE) \
+  { \
+    std::stringstream ss; \
+    ss << Ms << std::endl; \
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) { \
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) { \
+        ss << Mr[2][j][i] << " "; \
+      } \
+      ss << std::endl; \
+    } \
+    flog(info) << ss.str() << std::endl; \
+  } \
+  { \
+    std::stringstream ss; \
+    ss << Ms << std::endl; \
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) { \
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) { \
+        ss << Mru[2][j][i] << " "; \
+      } \
+      ss << std::endl; \
+    } \
+    flog(info) << ss.str() << std::endl; \
+  } \
+  { \
+    std::stringstream ss; \
+    ss << Ms << std::endl; \
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) { \
+      for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) { \
+        ss << MrE[2][j][i] << " "; \
+      } \
+      ss << std::endl; \
+    } \
+    flog(info) << ss.str() << std::endl; \
+  }
 
 template<mesh::axis A, typename L>
 void
 advance(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
-  field<velocity>::accessor<rw, ro> ru_a,
+  field<vec3>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a,
-  field<velocity>::accessor<rw, ro> u_a,
+  field<vec3>::accessor<rw, ro> u_a,
   field<double>::accessor<rw, ro> p_a,
   field<double>::accessor<rw, ro> q_a,
-  field<velocity>::accessor<rw, ro> qu_a,
+  field<vec3>::accessor<rw, ro> qu_a,
   field<double>::accessor<rw, ro> qE_a,
   field<double>::accessor<rw, ro> dr_ds_a,
-  field<velocity>::accessor<rw, ro> du_ds_a,
+  field<vec3>::accessor<rw, ro> du_ds_a,
   field<double>::accessor<rw, ro> dp_ds_a,
   field<double>::accessor<rw, ro> rTail_a,
-  field<velocity>::accessor<rw, ro> ruTail_a,
+  field<vec3>::accessor<rw, ro> ruTail_a,
   field<double>::accessor<rw, ro> rETail_a,
-  field<velocity>::accessor<rw, ro> uTail_a,
+  field<vec3>::accessor<rw, ro> uTail_a,
   field<double>::accessor<rw, ro> pTail_a,
   field<double>::accessor<rw, ro> rHead_a,
-  field<velocity>::accessor<rw, ro> ruHead_a,
+  field<vec3>::accessor<rw, ro> ruHead_a,
   field<double>::accessor<rw, ro> rEHead_a,
-  field<velocity>::accessor<rw, ro> uHead_a,
+  field<vec3>::accessor<rw, ro> uHead_a,
   field<double>::accessor<rw, ro> pHead_a,
   field<double>::accessor<rw, ro> rF_a,
-  field<velocity>::accessor<rw, ro> ruF_a,
+  field<vec3>::accessor<rw, ro> ruF_a,
   field<double>::accessor<rw, ro> rEF_a,
   single<double>::accessor<ro> gamma_a,
   double dt) {
@@ -159,18 +195,18 @@ advance(mesh::accessor<ro> m,
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::predictor>()) {
           // Density
-          qu[k][j][i].x =
+          q[k][j][i] =
             r[k][j][i] - courant * (ruTail[k][j][i].x - ruHead[k][j][i].x);
 
           // Momentum
           // ru^2 + p
           // ruv
           // ruw
-          const velocity f_qu_Tail{
+          const vec3 f_qu_Tail{
             ruTail[k][j][i].x * uTail[k][j][i].x + pTail[k][j][i],
             rTail[k][j][i] * uTail[k][j][i].x * uTail[k][j][i].y,
             rTail[k][j][i] * uTail[k][j][i].x * uTail[k][j][i].z};
-          const velocity f_qu_Head{
+          const vec3 f_qu_Head{
             ruHead[k][j][i].x * uHead[k][j][i].x + pHead[k][j][i],
             rHead[k][j][i] * uHead[k][j][i].x * uHead[k][j][i].y,
             rHead[k][j][i] * uHead[k][j][i].x * uHead[k][j][i].z};
@@ -265,18 +301,18 @@ advance(mesh::accessor<ro> m,
           const double Ldiv{1.0 / (Lplus - Lminus)};
           const double Lmult{Lplus * Lminus};
           const double delta_r{rHead[k][j][i] - rTail[k][j][i]};
-          const velocity delta_ru{ruHead[k][j][i].x - ruTail[k][j][i].x,
+          const vec3 delta_ru{ruHead[k][j][i].x - ruTail[k][j][i].x,
             ruHead[k][j][i].y - ruTail[k][j][i].y,
             ruHead[k][j][i].z - ruTail[k][j][i].z};
           const double delta_rE{rEHead[k][j][i] - rETail[k][j][i]};
 
           const double f_r_T{ruTail[k][j][i].x};
           const double f_r_H{ruHead[k][j][i].x};
-          const velocity f_ru_T{
+          const vec3 f_ru_T{
             ruTail[k][j][i].x * uTail[k][j][i].x + pTail[k][j][i],
             ruTail[k][j][i].x * uTail[k][j][i].y,
             ruTail[k][j][i].x * uTail[k][j][i].z};
-          const velocity f_ru_H{
+          const vec3 f_ru_H{
             ruHead[k][j][i].x * uHead[k][j][i].x + pHead[k][j][i],
             ruHead[k][j][i].x * uHead[k][j][i].y,
             ruHead[k][j][i].x * uHead[k][j][i].z};
@@ -409,11 +445,11 @@ advance(mesh::accessor<ro> m,
           // ruv
           // rv^2+p
           // rvw
-          const velocity f_qu_Tail{
+          const vec3 f_qu_Tail{
             rTail[k][j][i] * uTail[k][j][i].x * uTail[k][j][i].y,
             ruTail[k][j][i].y * uTail[k][j][i].y + pTail[k][j][i],
             rTail[k][j][i] * uTail[k][j][i].y * uTail[k][j][i].z};
-          const velocity f_qu_Head{
+          const vec3 f_qu_Head{
             rHead[k][j][i] * uHead[k][j][i].x * uHead[k][j][i].y,
             ruHead[k][j][i].y * uHead[k][j][i].y + pHead[k][j][i],
             rHead[k][j][i] * uHead[k][j][i].y * uHead[k][j][i].z};
@@ -508,18 +544,18 @@ advance(mesh::accessor<ro> m,
           const double Ldiv{1.0 / (Lplus - Lminus)};
           const double Lmult{Lplus * Lminus};
           const double delta_r{rHead[k][j][i] - rTail[k][j][i]};
-          const velocity delta_ru{ruHead[k][j][i].x - ruTail[k][j][i].x,
+          const vec3 delta_ru{ruHead[k][j][i].x - ruTail[k][j][i].x,
             ruHead[k][j][i].y - ruTail[k][j][i].y,
             ruHead[k][j][i].z - ruTail[k][j][i].z};
           const double delta_rE{rEHead[k][j][i] - rETail[k][j][i]};
 
           const double f_r_T{ruTail[k][j][i].y};
           const double f_r_H{ruHead[k][j][i].y};
-          const velocity f_ru_T{
+          const vec3 f_ru_T{
             rTail[k][j][i] * uTail[k][j][i].x * uTail[k][j][i].y,
             ruTail[k][j][i].y * uTail[k][j][i].y + pTail[k][j][i],
             rTail[k][j][i] * uTail[k][j][i].y * uTail[k][j][i].z};
-          const velocity f_ru_H{
+          const vec3 f_ru_H{
             rHead[k][j][i] * uHead[k][j][i].x * uHead[k][j][i].y,
             ruHead[k][j][i].y * uHead[k][j][i].y + pHead[k][j][i],
             rHead[k][j][i] * uHead[k][j][i].y * uHead[k][j][i].z};
@@ -652,11 +688,11 @@ advance(mesh::accessor<ro> m,
           // ruw
           // rvw
           // rw^2+p
-          const velocity f_qu_Tail{
+          const vec3 f_qu_Tail{
             rTail[k][j][i] * uTail[k][j][i].x * uTail[k][j][i].z,
             rTail[k][j][i] * uTail[k][j][i].y * uTail[k][j][i].z,
             ruTail[k][j][i].z * uTail[k][j][i].z + pTail[k][j][i]};
-          const velocity f_qu_Head{
+          const vec3 f_qu_Head{
             rHead[k][j][i] * uHead[k][j][i].x * uHead[k][j][i].z,
             rHead[k][j][i] * uHead[k][j][i].y * uHead[k][j][i].z,
             ruHead[k][j][i].z * uHead[k][j][i].z + pHead[k][j][i]};
@@ -751,18 +787,18 @@ advance(mesh::accessor<ro> m,
           const double Ldiv{1.0 / (Lplus - Lminus)};
           const double Lmult{Lplus * Lminus};
           const double delta_r{rHead[k][j][i] - rTail[k][j][i]};
-          const velocity delta_ru{ruHead[k][j][i].x - ruTail[k][j][i].x,
+          const vec3 delta_ru{ruHead[k][j][i].x - ruTail[k][j][i].x,
             ruHead[k][j][i].y - ruTail[k][j][i].y,
             ruHead[k][j][i].z - ruTail[k][j][i].z};
           const double delta_rE{rEHead[k][j][i] - rETail[k][j][i]};
 
           const double f_r_T{ruTail[k][j][i].z};
           const double f_r_H{ruHead[k][j][i].z};
-          const velocity f_ru_T{
+          const vec3 f_ru_T{
             rTail[k][j][i] * uTail[k][j][i].x * uTail[k][j][i].z,
             rTail[k][j][i] * uTail[k][j][i].y * uTail[k][j][i].z,
             ruTail[k][j][i].z * uTail[k][j][i].z + pTail[k][j][i]};
-          const velocity f_ru_H{
+          const vec3 f_ru_H{
             rHead[k][j][i] * uHead[k][j][i].x * uHead[k][j][i].z,
             rHead[k][j][i] * uHead[k][j][i].y * uHead[k][j][i].z,
             ruHead[k][j][i].z * uHead[k][j][i].z + pHead[k][j][i]};

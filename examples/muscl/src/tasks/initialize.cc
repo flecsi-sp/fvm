@@ -54,7 +54,7 @@ static const double sodx0 = 0.5;
 void
 muscl::tasks::init::sod(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
-  field<velocity>::accessor<rw, ro> ru_a,
+  field<vec3>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a,
   single<double>::accessor<ro> gamma_a) {
   auto r = m.mdspan<mesh::cells>(r_a);
@@ -66,7 +66,7 @@ muscl::tasks::init::sod(mesh::accessor<ro> m,
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
       for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-        const auto x = m.tail<mesh::x_axis>(i);
+        const auto x = m.head<mesh::x_axis>(i);
 
         if(x < sodx0) {
           r[k][j][i] = sodrL;
