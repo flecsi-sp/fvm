@@ -6,6 +6,8 @@
 #include <flecsi/flog.hh>
 #include <flecsi/topo/narray/coloring_utils.hh>
 
+#include <ranges>
+
 namespace fvm {
 
 struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
@@ -49,7 +51,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
   struct interface : B {
 
     template<axis A, domain DM = quantities>
-    std::size_t size() {
+    auto size() {
       if constexpr(DM == quantities) {
         return B::template size<mesh::cells, A, base::domain::logical>();
       }
@@ -67,23 +69,39 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
       } // if
     } // size
 
-    template<axis A, domain DM = quantities>
+    template<auto S, typename T>
+    auto make_ids(T && t) const {
+      return std::ranges::transform_view(std::forward<T>(t),
+        [](auto const & i) { return flecsi::topo::id<S>(i); });
+    }
+
+    template<axis A, domain DM = quantities, bool R = false>
     FLECSI_INLINE_TARGET auto cells() const {
+      flecsi::util::id b, e;
+
       if constexpr(DM == quantities) {
-        return B::template range<mesh::cells, A, base::domain::logical>();
+        b = 2;
+        e = B::template size<mesh::cells, A, base::domain::all>() - 2;
       }
       else if constexpr(DM == predictor) {
-        return flecsi::topo::make_ids<mesh::cells>(
-          flecsi::util::iota_view<flecsi::util::id>(
-            1, B::template size<mesh::cells, A, base::domain::all>() - 1));
+        b = 1;
+        e = B::template size<mesh::cells, A, base::domain::all>() - 1;
       }
       else if constexpr(DM == corrector) {
-        return flecsi::topo::make_ids<mesh::cells>(
-          flecsi::util::iota_view<flecsi::util::id>(
-            2, B::template size<mesh::cells, A, base::domain::all>() - 1));
+        b = 2;
+        e = B::template size<mesh::cells, A, base::domain::all>() - 1;
       }
       else if constexpr(DM == all) {
-        return B::template range<mesh::cells, A, base::domain::all>();
+        b = 0;
+        e = B::template size<mesh::cells, A, base::domain::all>();
+      } // if
+
+      if constexpr(R) {
+        return make_ids<mesh::cells>(
+          std::ranges::iota_view{b, e} | std::views::reverse);
+      }
+      else {
+        return make_ids<mesh::cells>(std::ranges::iota_view{b, e});
       } // if
     } // cells
 

@@ -7,6 +7,21 @@
 
 namespace muscl::tasks::util {
 
+template<mesh::axis A>
+inline void
+mesh_info(mesh::accessor<ro> m) {
+  std::stringstream ss;
+
+  ss << "Mesh Info:" << std::endl;
+  ss << "  sizes:" << std::endl;
+  ss << "    quantities: " << m.size<A, mesh::domain::quantities>()
+     << std::endl;
+  ss << "    predictor: " << m.size<A, mesh::domain::predictor>() << std::endl;
+  ss << "    corrector: " << m.size<A, mesh::domain::corrector>() << std::endl;
+  ss << "    all: " << m.size<A, mesh::domain::all>() << std::endl;
+  flog(info) << ss.str() << std::endl;
+} // mesh_info
+
 template<mesh::domain DM>
 inline void
 cell_info(mesh::accessor<ro> m) {
@@ -42,7 +57,7 @@ print_conserved(mesh::accessor<ro> m,
     auto r = m.mdspan<mesh::cells>(r_a);
     std::stringstream ss;
     ss << "DENSITY:" << std::endl;
-    for(auto j : m.cells<mesh::y_axis, DM>()) {
+    for(auto j : m.cells<mesh::y_axis, DM, true>()) {
       for(auto i : m.cells<mesh::x_axis, DM>()) {
         ss << r[zslice][j][i] << " ";
       } // for
@@ -51,11 +66,12 @@ print_conserved(mesh::accessor<ro> m,
 
     flog(info) << ss.str() << std::endl;
   }
+#if 0
   {
     auto ru = m.mdspan<mesh::cells>(ru_a);
     std::stringstream ss;
     ss << "MOMENTUM:" << std::endl;
-    for(auto j : m.cells<mesh::y_axis, DM>()) {
+    for(auto j : m.cells<mesh::y_axis, DM, true>()) {
       for(auto i : m.cells<mesh::x_axis, DM>()) {
         ss << ru[zslice][j][i] << " ";
       } // for
@@ -68,7 +84,7 @@ print_conserved(mesh::accessor<ro> m,
     auto rE = m.mdspan<mesh::cells>(rE_a);
     std::stringstream ss;
     ss << "TOTAL ENERGY:" << std::endl;
-    for(auto j : m.cells<mesh::y_axis, DM>()) {
+    for(auto j : m.cells<mesh::y_axis, DM, true>()) {
       for(auto i : m.cells<mesh::x_axis, DM>()) {
         ss << rE[zslice][j][i] << " ";
       } // for
@@ -77,6 +93,7 @@ print_conserved(mesh::accessor<ro> m,
 
     flog(info) << ss.str() << std::endl;
   }
+#endif
 } // print_conserved
 
 template<mesh::domain DM>

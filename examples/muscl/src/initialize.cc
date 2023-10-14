@@ -75,7 +75,6 @@ action::initialize(control_policy & cp) {
     m.allocate(coloring.get(), geom);
   } // scope
 
-#if 1
   /*--------------------------------------------------------------------------*
     Fake initialization to avoid legion warnings.
    *--------------------------------------------------------------------------*/
@@ -98,6 +97,9 @@ action::initialize(control_policy & cp) {
     rHead(m), ruHead(m), rEHead(m), uHead(m), pHead(m),
     rF(m), ruF(m), rEF(m));
   // clang-format on
+
+#if 0 // FIXME: Debug
+  execute<tasks::util::mesh_info<mesh::x_axis>>(m);
 #endif
 
   /*--------------------------------------------------------------------------*
@@ -106,6 +108,12 @@ action::initialize(control_policy & cp) {
 
   if(config["problem"].as<std::string>() == "sod") {
     execute<tasks::init::sod>(m, r(m), ru(m), rE(m), gamma(gt));
+  }
+  else if(config["problem"].as<std::string>() == "monotonic") {
+    execute<tasks::init::monotonic>(m, r(m), ru(m), rE(m), gamma(gt));
+  }
+  else if(config["problem"].as<std::string>() == "color") {
+    execute<tasks::init::color>(m, r(m), ru(m), rE(m), gamma(gt));
   }
   else {
     flog_fatal(
@@ -119,15 +127,19 @@ action::initialize(control_policy & cp) {
     m, r(m), ru(m), rE(m), 2);
 #endif
 
+#if 1 // FIXME: Debug
   execute<tasks::hydro::update_primitives>(
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
+#endif
 
 #if 1 // FIXME: Debug
   execute<tasks::util::print_primitives<mesh::domain::all>>(m, u(m), p(m), 2);
 #endif
 
+#if 1 // FIXME: Debug
   execute<tasks::hydro::update_eigenvalues>(
     m, r(m), u(m), p(m), lmax(ct), gamma(gt));
 
   cp.dtmin() = reduce<tasks::hydro::update_dtmin, exec::fold::min>(m, lmax(ct));
+#endif
 } // action::initialize
