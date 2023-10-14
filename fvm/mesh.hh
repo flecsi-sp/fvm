@@ -43,6 +43,12 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
   template<auto>
   static constexpr std::size_t privilege_count = 2;
 
+  template<auto S, typename T>
+  static auto make_ids(T && t) {
+    return std::ranges::transform_view(std::forward<T>(t),
+      [](auto const & i) { return flecsi::topo::id<S>(i); });
+  } // make_ids
+
   /*--------------------------------------------------------------------------*
     Interface.
    *--------------------------------------------------------------------------*/
@@ -68,12 +74,6 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
         return B::template size<mesh::cells, A, base::domain::global>();
       } // if
     } // size
-
-    template<auto S, typename T>
-    auto make_ids(T && t) const {
-      return std::ranges::transform_view(std::forward<T>(t),
-        [](auto const & i) { return flecsi::topo::id<S>(i); });
-    }
 
     template<axis A, domain DM = quantities, bool R = false>
     FLECSI_INLINE_TARGET auto cells() const {
@@ -176,17 +176,20 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     Initialization.
    *--------------------------------------------------------------------------*/
 
-  // FIXME: colors != processes
-  static void set_geometry(mesh::accessor<flecsi::rw> sm, grect const & g) {
-    sm.set_geometry((g[0][1] - g[0][0]) / sm.size<x_axis, global>(),
-      (g[1][1] - g[1][0]) / sm.size<y_axis, global>(),
-      (g[2][1] - g[2][0]) / sm.size<z_axis, global>());
+  static void set_geometry(flecsi::data::multi<mesh::accessor<flecsi::rw>> mm,
+    grect const & g) {
+    for(auto & m : mm.accessors()) {
+      m.set_geometry((g[0][1] - g[0][0]) / m.size<x_axis, global>(),
+        (g[1][1] - g[1][0]) / m.size<y_axis, global>(),
+        (g[2][1] - g[2][0]) / m.size<z_axis, global>());
+    } // for
   } // set_geometry
 
   static void initialize(flecsi::data::topology_slot<mesh> & s,
     coloring const &,
     grect const & geometry) {
-    flecsi::execute<set_geometry, flecsi::mpi>(s, geometry);
+    auto lm = flecsi::data::launch::make(s);
+    flecsi::execute<set_geometry>(lm, geometry);
   } // initialize
 
 }; // struct mesh
