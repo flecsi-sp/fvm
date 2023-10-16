@@ -438,7 +438,7 @@ advance(mesh::accessor<ro> m,
       for(auto j : m.cells<mesh::y_axis, mesh::predictor>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           // Density
-          qu[k][j][i].y =
+          q[k][j][i] =
             r[k][j][i] - courant * (ruTail[k][j][i].y - ruHead[k][j][i].y);
 
           // Momentum
@@ -681,7 +681,7 @@ advance(mesh::accessor<ro> m,
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           // Density
-          qu[k][j][i].z =
+          q[k][j][i] =
             r[k][j][i] - courant * (ruTail[k][j][i].z - ruHead[k][j][i].z);
 
           // Momentum
