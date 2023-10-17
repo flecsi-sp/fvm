@@ -13,11 +13,8 @@ sqr(T t) {
 
 inline fvm::mesh::boundary_type
 mesh_boundary(std::string const & b) {
-  if(b == "inflow") {
-    return fvm::mesh::boundary_type::inflow;
-  }
-  if(b == "outflow") {
-    return fvm::mesh::boundary_type::outflow;
+  if(b == "flow") {
+    return fvm::mesh::boundary_type::flow;
   }
   if(b == "reflecting") {
     return fvm::mesh::boundary_type::reflecting;

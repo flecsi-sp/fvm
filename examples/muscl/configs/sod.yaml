@@ -13,7 +13,7 @@ coords:
 boundaries:
   xlow: reflecting
   xhigh: reflecting
-  ylow: inflow
-  yhigh: outflow
-  zlow: inflow
-  zhigh: outflow
+  ylow: flow
+  yhigh: flow
+  zlow: flow
+  zhigh: flow
