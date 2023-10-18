@@ -7,45 +7,6 @@
 
 namespace muscl::tasks::util {
 
-template<mesh::axis A>
-inline void
-mesh_info(mesh::accessor<ro> m) {
-  std::stringstream ss;
-
-  ss << "Mesh Info:" << std::endl;
-  ss << "  sizes:" << std::endl;
-  ss << "    quantities: " << m.size<A, mesh::domain::quantities>()
-     << std::endl;
-  ss << "    predictor: " << m.size<A, mesh::domain::predictor>() << std::endl;
-  ss << "    corrector: " << m.size<A, mesh::domain::corrector>() << std::endl;
-  ss << "    all: " << m.size<A, mesh::domain::all>() << std::endl;
-  flog(info) << ss.str() << std::endl;
-} // mesh_info
-
-template<mesh::domain DM>
-inline void
-cell_info(mesh::accessor<ro> m) {
-  std::stringstream ss;
-  for(auto k : m.cells<mesh::z_axis, DM>()) {
-    for(auto j : m.cells<mesh::y_axis, DM>()) {
-      for(auto i : m.cells<mesh::x_axis, DM>()) {
-        ss << "cell: (" << i << ", " << j << ", " << k << ")" << std::endl;
-        ss << "\tcenter: (" << m.center<mesh::x_axis>(i) << ", "
-           << m.center<mesh::x_axis>(j) << ", " << m.center<mesh::x_axis>(k)
-           << ")" << std::endl;
-        ss << "\ttail: (" << m.tail<mesh::x_axis>(i) << ", "
-           << m.tail<mesh::x_axis>(j) << ", " << m.tail<mesh::x_axis>(k) << ")"
-           << std::endl;
-        ss << "\thead: (" << m.head<mesh::x_axis>(i) << ", "
-           << m.head<mesh::x_axis>(j) << ", " << m.head<mesh::x_axis>(k) << ")"
-           << std::endl;
-      } // for
-    } // for
-  } // for
-
-  flog(info) << ss.str() << std::endl;
-} // cell_info
-
 template<mesh::domain DM>
 inline void
 print_conserved(mesh::accessor<ro> m,

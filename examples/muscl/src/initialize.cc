@@ -98,22 +98,12 @@ action::initialize(control_policy & cp) {
     rF(m), ruF(m), rEF(m));
   // clang-format on
 
-#if 0 // FIXME: Debug
-  execute<tasks::util::mesh_info<mesh::x_axis>>(m);
-#endif
-
   /*--------------------------------------------------------------------------*
     Initialize problem state.
    *--------------------------------------------------------------------------*/
 
   if(config["problem"].as<std::string>() == "sod") {
     execute<tasks::init::sod>(m, r(m), ru(m), rE(m), gamma(gt));
-  }
-  else if(config["problem"].as<std::string>() == "monotonic") {
-    execute<tasks::init::monotonic>(m, r(m), ru(m), rE(m), gamma(gt));
-  }
-  else if(config["problem"].as<std::string>() == "color") {
-    execute<tasks::init::color>(m, r(m), ru(m), rE(m), gamma(gt));
   }
   else {
     flog_fatal(

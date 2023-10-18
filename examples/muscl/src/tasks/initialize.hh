@@ -75,18 +75,6 @@ void sod(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> rE_a,
   single<double>::accessor<ro> gamma_a);
 
-void monotonic(mesh::accessor<ro> m,
-  field<double>::accessor<rw, ro> r_a,
-  field<vec3>::accessor<rw, ro> ru_a,
-  field<double>::accessor<rw, ro> rE_a,
-  single<double>::accessor<ro> gamma_a);
-
-void color(mesh::accessor<ro> m,
-  field<double>::accessor<rw, ro> r_a,
-  field<vec3>::accessor<rw, ro> ru_a,
-  field<double>::accessor<rw, ro> rE_a,
-  single<double>::accessor<ro> gamma_a);
-
 } // namespace muscl::tasks::init
 
 #endif // MUSCL_TASKS_INITIALIZE_HH

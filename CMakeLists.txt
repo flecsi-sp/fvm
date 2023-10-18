@@ -125,3 +125,4 @@ target_include_directories(FleCSI-SP-FVM INTERFACE
 #------------------------------------------------------------------------------#
 
 add_subdirectory(examples/muscl)
+add_subdirectory(examples/test)

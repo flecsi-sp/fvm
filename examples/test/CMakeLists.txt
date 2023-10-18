@@ -1,19 +1,9 @@
 #------------------------------------------------------------------------------#
-# Yaml
-#------------------------------------------------------------------------------#
-
-find_package(yaml-cpp REQUIRED)
-
-#------------------------------------------------------------------------------#
 # Add an executable.
 #------------------------------------------------------------------------------#
 
-add_executable(muscl
-  src/advance.cc
-  src/analyze.cc
-  src/initialize.cc
-  src/muscl.cc
-  src/tasks/hydro.cc
+add_executable(test
+  src/test.cc
   src/tasks/initialize.cc
 )
 
@@ -21,7 +11,6 @@ add_executable(muscl
 # Add the FleCSI libraries and dependencies.
 #------------------------------------------------------------------------------#
 
-target_link_libraries(muscl FleCSI::FleCSI
+target_link_libraries(test FleCSI::FleCSI
   FleCSI-SP-FVM::FleCSI-SP-FVM
-  yaml-cpp
 )
