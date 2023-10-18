@@ -76,8 +76,7 @@ action::advance(control_policy & cp) {
 #if 1 // FIXME: Debug
   execute<tasks::util::print_conserved<mesh::domain::all>>(
     m, r(m), ru(m), rE(m), 2);
-  execute<tasks::util::print_primitives<mesh::domain::all>>(
-    m, u(m), p(m), 2);
+  execute<tasks::util::print_primitives<mesh::domain::all>>(m, u(m), p(m), 2);
 #endif
 
   execute<tasks::hydro::update_eigenvalues>(

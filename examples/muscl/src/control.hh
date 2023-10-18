@@ -10,7 +10,17 @@
 
 namespace muscl {
 
-enum class cp { initialize, advance, analyze, finalize };
+/// Control Points.
+enum class cp {
+  ///
+  initialize,
+  ///
+  advance,
+  ///
+  analyze,
+  ///
+  finalize
+};
 
 inline const char *
 operator*(cp control_point) {
@@ -27,6 +37,7 @@ operator*(cp control_point) {
   flog_fatal("invalid control point");
 }
 
+/// MUSCL-Hancock Sovler Control Model.
 struct control_policy : flecsi::run::control_base {
 
   using control_points_enum = cp;
@@ -53,6 +64,10 @@ struct control_policy : flecsi::run::control_base {
 
   double dt() {
     return dt_;
+  }
+
+  std::size_t step() {
+    return step_;
   }
 
   static bool cycle_control(control_policy & cp) {

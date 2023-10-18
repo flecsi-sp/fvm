@@ -47,7 +47,8 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     /// Y-coordinate axis.
     y_axis,
     /// Z-coordinate axis.
-    z_axis };
+    z_axis
+  };
 
   using axes = has<x_axis, y_axis, z_axis>;
 
@@ -62,7 +63,8 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
 
   /// Boundary type.
   /// The supported boundary types are derived from Leveque's
-  /// [Finite Volume Methods for Hyperbolc Problems](https://www.amazon.com/Methods-Hyperbolic-Problems-Cambridge-Mathematics/dp/0521009243).
+  /// [Finite Volume Methods for Hyperbolc
+  /// Problems](https://www.amazon.com/Methods-Hyperbolic-Problems-Cambridge-Mathematics/dp/0521009243).
   /// All boundary conditions are implemented using the \em ghost-cell approach
   /// outlined in the text.
   enum boundary_type {
@@ -165,7 +167,8 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
         e = B::template size<mesh::cells, A, base::domain::all>();
       }
       else if(DM == global) {
-        flog_fatal("illegal domain: you cannot iterate over the global domain.");
+        flog_fatal(
+          "illegal domain: you cannot iterate over the global domain.");
       } // if
 
       if constexpr(R) {
@@ -245,9 +248,9 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
    *--------------------------------------------------------------------------*/
 
   static void set_geometry(mesh::accessor<flecsi::rw> m, grect const & g) {
-      m.set_geometry((g[0][1] - g[0][0]) / m.size<x_axis, global>(),
-        (g[1][1] - g[1][0]) / m.size<y_axis, global>(),
-        (g[2][1] - g[2][0]) / m.size<z_axis, global>());
+    m.set_geometry((g[0][1] - g[0][0]) / m.size<x_axis, global>(),
+      (g[1][1] - g[1][0]) / m.size<y_axis, global>(),
+      (g[2][1] - g[2][0]) / m.size<z_axis, global>());
   } // set_geometry
 
   static void initialize(flecsi::data::topology_slot<mesh> & s,
