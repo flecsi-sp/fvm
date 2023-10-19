@@ -16,9 +16,9 @@ flow(mesh::accessor<ro> m,
   auto rE = m.mdspan<mesh::cells>(rE_a);
 
   if constexpr(A == mesh::axis::x_axis) {
-    if(B == mesh::boundary::low) {
-      for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-        for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
+    if(B == mesh::boundary::low && m.is_low<A>()) {
+      for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+        for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
           r[k][j][0] = r[k][j][2];
           r[k][j][1] = r[k][j][2];
           ru[k][j][0].x = ru[k][j][2].x;
@@ -32,10 +32,10 @@ flow(mesh::accessor<ro> m,
         } // for
       } // for
     }
-    else {
-      const std::size_t i = m.size<mesh::x_axis, mesh::all>();
-      for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-        for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
+    else if(B == mesh::boundary::high && m.is_high<A>()) {
+      const std::size_t i = m.size<A, mesh::all>();
+      for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+        for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
           r[k][j][i - 1] = r[k][j][i - 3];
           r[k][j][i - 2] = r[k][j][i - 3];
           ru[k][j][i - 1].x = ru[k][j][i - 3].x;
@@ -51,9 +51,9 @@ flow(mesh::accessor<ro> m,
     } // if
   }
   else if constexpr(A == mesh::axis::y_axis) {
-    if(B == mesh::boundary::low) {
-      for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-        for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+    if(B == mesh::boundary::low && m.is_low<A>()) {
+      for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[k][0][i] = r[k][2][i];
           r[k][1][i] = r[k][2][i];
           ru[k][0][i].x = ru[k][2][i].x;
@@ -67,10 +67,10 @@ flow(mesh::accessor<ro> m,
         } // for
       } // for
     }
-    else {
-      const std::size_t j = m.size<mesh::x_axis, mesh::all>();
-      for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-        for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+    else if(B == mesh::boundary::high && m.is_high<A>()) {
+      const std::size_t j = m.size<A, mesh::all>();
+      for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[k][j - 1][i] = r[k][j - 3][i];
           r[k][j - 2][i] = r[k][j - 3][i];
           ru[k][j - 1][i].x = ru[k][j - 3][i].x;
@@ -86,9 +86,9 @@ flow(mesh::accessor<ro> m,
     } // if
   }
   else {
-    if(B == mesh::boundary::low) {
-      for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-        for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+    if(B == mesh::boundary::low && m.is_low<A>()) {
+      for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[0][j][i] = r[2][j][i];
           r[1][j][i] = r[2][j][i];
           ru[0][j][i].x = ru[2][j][i].x;
@@ -102,10 +102,10 @@ flow(mesh::accessor<ro> m,
         } // for
       } // for
     }
-    else {
-      const std::size_t k = m.size<mesh::z_axis, mesh::all>();
-      for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-        for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+    else if(B == mesh::boundary::high && m.is_high<A>()) {
+      const std::size_t k = m.size<A, mesh::all>();
+      for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[k - 1][j][i] = r[k - 3][j][i];
           r[k - 2][j][i] = r[k - 3][j][i];
           ru[k - 1][j][i].x = ru[k - 3][j][i].x;
@@ -133,9 +133,9 @@ reflecting(mesh::accessor<ro> m,
   auto rE = m.mdspan<mesh::cells>(rE_a);
 
   if constexpr(A == mesh::axis::x_axis) {
-    if(B == mesh::boundary::low) {
-      for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-        for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
+    if(B == mesh::boundary::low && m.is_low<A>()) {
+      for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+        for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
           r[k][j][0] = r[k][j][3];
           r[k][j][1] = r[k][j][2];
           ru[k][j][0].x = ru[k][j][3].x;
@@ -149,10 +149,10 @@ reflecting(mesh::accessor<ro> m,
         } // for
       } // for
     }
-    else {
-      const std::size_t i = m.size<mesh::x_axis, mesh::all>();
-      for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-        for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
+    else if(B == mesh::boundary::high && m.is_high<A>()) {
+      const std::size_t i = m.size<A, mesh::all>();
+      for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+        for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
           r[k][j][i - 1] = r[k][j][i - 4];
           r[k][j][i - 2] = r[k][j][i - 3];
           ru[k][j][i - 1].x = ru[k][j][i - 4].x;
@@ -168,9 +168,9 @@ reflecting(mesh::accessor<ro> m,
     } // if
   }
   else if constexpr(A == mesh::axis::y_axis) {
-    if(B == mesh::boundary::low) {
-      for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-        for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+    if(B == mesh::boundary::low && m.is_low<A>()) {
+      for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[k][0][i] = r[k][3][i];
           r[k][1][i] = r[k][2][i];
           ru[k][0][i].x = ru[k][3][i].x;
@@ -184,10 +184,10 @@ reflecting(mesh::accessor<ro> m,
         } // for
       } // for
     }
-    else {
-      const std::size_t j = m.size<mesh::x_axis, mesh::all>();
-      for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-        for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+    else if(B == mesh::boundary::high && m.is_high<A>()) {
+      const std::size_t j = m.size<A, mesh::all>();
+      for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[k][j - 1][i] = r[k][j - 4][i];
           r[k][j - 2][i] = r[k][j - 3][i];
           ru[k][j - 1][i].x = ru[k][j - 4][i].x;
@@ -203,9 +203,9 @@ reflecting(mesh::accessor<ro> m,
     } // if
   }
   else {
-    if(B == mesh::boundary::low) {
-      for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-        for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+    if(B == mesh::boundary::low && m.is_low<A>()) {
+      for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[0][j][i] = r[3][j][i];
           r[1][j][i] = r[2][j][i];
           ru[0][j][i].x = ru[3][j][i].x;
@@ -219,10 +219,10 @@ reflecting(mesh::accessor<ro> m,
         } // for
       } // for
     }
-    else {
-      const std::size_t k = m.size<mesh::z_axis, mesh::all>();
-      for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-        for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+    else if(B == mesh::boundary::high && m.is_high<A>()) {
+      const std::size_t k = m.size<A, mesh::all>();
+      for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
           r[k - 1][j][i] = r[k - 4][j][i];
           r[k - 2][j][i] = r[k - 3][j][i];
           ru[k - 1][j][i].x = ru[k - 4][j][i].x;

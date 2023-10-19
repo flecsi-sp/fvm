@@ -224,6 +224,16 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
       return center<A>(i) + 0.5 * delta<A>();
     } // center
 
+    template<axis A>
+    bool is_low() {
+      return B::template is_low<mesh::cells, A>();
+    } // is_low
+
+    template<axis A>
+    bool is_high() {
+      return B::template is_high<mesh::cells, A>();
+    } // is_high
+
   }; // interface
 
   /*--------------------------------------------------------------------------*

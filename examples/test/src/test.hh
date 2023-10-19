@@ -33,6 +33,12 @@ inline int execute() {
   } // scope
 
   flecsi::execute<tasks::init::monotonic>(m, f(m));
+  flecsi::execute<tasks::init::boundary<mesh::x_axis, mesh::low>>(m, f(m));
+  flecsi::execute<tasks::init::boundary<mesh::x_axis, mesh::high>>(m, f(m));
+  flecsi::execute<tasks::init::boundary<mesh::y_axis, mesh::low>>(m, f(m));
+  flecsi::execute<tasks::init::boundary<mesh::y_axis, mesh::high>>(m, f(m));
+  //flecsi::execute<tasks::init::boundary<mesh::z_axis, mesh::low>>(m, f(m));
+  //flecsi::execute<tasks::init::boundary<mesh::z_axis, mesh::high>>(m, f(m));
 
   flecsi::execute<tasks::util::mesh_info<mesh::x_axis>>(m);
   //flecsi::execute<tasks::util::cell_info<mesh::domain::quantities>>(m);

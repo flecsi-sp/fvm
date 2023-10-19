@@ -18,9 +18,9 @@ muscl::tasks::hydro::update_primitives(mesh::accessor<ro> m,
   auto const gamma = *gamma_a;
 
   // Initialize primitive quantities.
-  for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-    for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+  for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
+      for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
         u[k][j][i].x = ru[k][j][i].x / r[k][j][i];
         u[k][j][i].y = ru[k][j][i].y / r[k][j][i];
         u[k][j][i].z = ru[k][j][i].z / r[k][j][i];
@@ -51,9 +51,9 @@ muscl::tasks::hydro::update_eigenvalues(mesh::accessor<ro> m,
   lmax.x = std::numeric_limits<double>::min();
   lmax.y = std::numeric_limits<double>::min();
   lmax.z = std::numeric_limits<double>::min();
-  for(auto k : m.cells<mesh::z_axis, mesh::all>()) {
-    for(auto j : m.cells<mesh::y_axis, mesh::all>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::all>()) {
+  for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
+    for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
+      for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
         const double c = std::sqrt(gamma * p[k][j][i] / r[k][j][i]);
         lmax.x = std::max(std::abs(u[k][j][i].x) + c, lmax.x);
         lmax.y = std::max(std::abs(u[k][j][i].y) + c, lmax.y);
