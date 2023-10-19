@@ -111,25 +111,9 @@ action::initialize(control_policy & cp) {
   } // if
 
   execute<tasks::apply_boundaries>(m, bmap(gt), r(m), ru(m), rE(m));
-
-#if 1 // FIXME: Debug
-  execute<tasks::util::print_conserved<mesh::domain::all>>(
-    m, r(m), ru(m), rE(m), 2);
-#endif
-
-#if 1 // FIXME: Debug
   execute<tasks::hydro::update_primitives>(
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
-#endif
-
-#if 1 // FIXME: Debug
-  execute<tasks::util::print_primitives<mesh::domain::all>>(m, u(m), p(m), 2);
-#endif
-
-#if 1 // FIXME: Debug
   execute<tasks::hydro::update_eigenvalues>(
     m, r(m), u(m), p(m), lmax(ct), gamma(gt));
-
   cp.dtmin() = reduce<tasks::hydro::update_dtmin, exec::fold::min>(m, lmax(ct));
-#endif
 } // action::initialize

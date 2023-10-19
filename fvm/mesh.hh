@@ -184,13 +184,15 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
       this->policy_meta() = {x, y, z};
     } // set_geometry
 
+    /// Return the global id of \em i for the given axis.
+    /// @tparam A The coordinate axis.
     template<axis A>
     FLECSI_INLINE_TARGET std::size_t global_id(std::size_t i) const {
       return B::template global_id<mesh::cells, A>(i);
     } // global_id
 
     /// Return the mesh spacing for the given axis.
-    /// @tparam A  The mesh axis.
+    /// @tparam A  The coordinate axis.
     template<axis A>
     FLECSI_INLINE_TARGET double delta() const {
       if constexpr(A == x_axis) {
@@ -206,12 +208,14 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
 
     /// Return the cell head for the given axis and id. The head is the trailing
     /// interface of the cell.
+    /// @tparam A  The coordinate axis.
     template<axis A>
     FLECSI_INLINE_TARGET double head(std::size_t i) const {
       return center<A>(i) - 0.5 * delta<A>();
     } // center
 
     /// Return the cell center for the given axis and id.
+    /// @tparam A  The coordinate axis.
     template<axis A>
     FLECSI_INLINE_TARGET double center(std::size_t i) const {
       return delta<A>() * global_id<A>(i) + 0.5 * delta<A>();
@@ -219,16 +223,23 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
 
     /// Return the cell tail for the given axis and id. The tail is the leading
     /// interface of the cell.
+    /// @tparam A  The coordinate axis.
     template<axis A>
     FLECSI_INLINE_TARGET double tail(std::size_t i) const {
       return center<A>(i) + 0.5 * delta<A>();
     } // center
 
+    /// Return true if the current color is a low-edge partition for the given
+    /// axis.
+    /// @tparam A  The coordinate axis.
     template<axis A>
     bool is_low() {
       return B::template is_low<mesh::cells, A>();
     } // is_low
 
+    /// Return true if the current color is a high-edge partition for the given
+    /// axis.
+    /// @tparam A  The coordinate axis.
     template<axis A>
     bool is_high() {
       return B::template is_high<mesh::cells, A>();

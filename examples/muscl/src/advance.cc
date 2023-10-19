@@ -28,9 +28,9 @@ action::advance(control_policy & cp) {
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
 
 #if 0 // FIXME: Debug
-  execute<tasks::util::print_conserved<mesh::domain::all>>(
+  execute<tasks::util::print_conserved<mesh::domain::quantities>>(
     m, r(m), ru(m), rE(m), 2);
-  execute<tasks::util::print_primitives<mesh::domain::all>>(
+  execute<tasks::util::print_primitives<mesh::domain::quantities>>(
     m, u(m), p(m), 2);
 #endif
 
@@ -51,9 +51,9 @@ action::advance(control_policy & cp) {
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
 
 #if 0 // FIXME: Debug
-  execute<tasks::util::print_conserved<mesh::domain::all>>(
+  execute<tasks::util::print_conserved<mesh::domain::quantities>>(
     m, r(m), ru(m), rE(m), 2);
-  execute<tasks::util::print_primitives<mesh::domain::all>>(
+  execute<tasks::util::print_primitives<mesh::domain::quantities>>(
     m, u(m), p(m), 2);
 #endif
 
@@ -74,9 +74,10 @@ action::advance(control_policy & cp) {
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
 
 #if 1 // FIXME: Debug
-  execute<tasks::util::print_conserved<mesh::domain::all>>(
+  execute<tasks::util::print_conserved<mesh::domain::quantities>>(
     m, r(m), ru(m), rE(m), 2);
-  execute<tasks::util::print_primitives<mesh::domain::all>>(m, u(m), p(m), 2);
+  execute<tasks::util::print_primitives<mesh::domain::quantities>>(
+    m, u(m), p(m), 2);
 #endif
 
   execute<tasks::hydro::update_eigenvalues>(
