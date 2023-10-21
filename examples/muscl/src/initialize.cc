@@ -103,12 +103,19 @@ action::initialize(control_policy & cp) {
    *--------------------------------------------------------------------------*/
 
   if(config["problem"].as<std::string>() == "sod") {
-    execute<tasks::init::sod>(m, r(m), ru(m), rE(m), gamma(gt));
+    execute<tasks::init::shock<sod>>(m, r(m), ru(m), rE(m), gamma(gt));
+  }
+  else if(config["problem"].as<std::string>() == "rankine-hugoniot") {
+    execute<tasks::init::shock<rankine_hugoniot>>(m, r(m), ru(m), rE(m), gamma(gt));
   }
   else {
     flog_fatal(
       "unsupported problem(" << config["problem"].as<std::string>() << ")");
   } // if
+
+  /*--------------------------------------------------------------------------*
+    Initialize time advance.
+   *--------------------------------------------------------------------------*/
 
   execute<tasks::apply_boundaries>(m, bmap(gt), r(m), ru(m), rE(m));
   execute<tasks::hydro::update_primitives>(
