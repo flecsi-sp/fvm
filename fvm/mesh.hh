@@ -4,7 +4,6 @@
 #include <flecsi/data.hh>
 #include <flecsi/execution.hh>
 #include <flecsi/flog.hh>
-#include <flecsi/topo/narray/coloring_utils.hh>
 
 #include <ranges>
 
@@ -255,7 +254,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
   static coloring
   color(std::size_t num_colors, gcoord axis_extents, periodic_axes p) {
     index_definition idef;
-    idef.axes = flecsi::topo::narray_utils::make_axes(num_colors, axis_extents);
+    idef.axes = base::make_axes(num_colors, axis_extents);
     std::size_t ai{0};
 
     for(auto & a : idef.axes) {
