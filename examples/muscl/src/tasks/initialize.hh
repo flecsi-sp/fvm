@@ -112,7 +112,7 @@ touch1(mesh::accessor<ro> m,
   Boundary input translation.
  *----------------------------------------------------------------------------*/
 
-void boundaries(single<mesh::bmap>::accessor<wo> bmap_a,
+mesh::periodic_axes boundaries(single<mesh::bmap>::accessor<wo> bmap_a,
   mesh::boundary_type xlow,
   mesh::boundary_type xhigh,
   mesh::boundary_type ylow,

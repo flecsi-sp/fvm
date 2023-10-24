@@ -76,6 +76,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     periodic
   };
 
+  using periodic_axes = std::array<bool, 3>;
   using coord = base::coord;
   using gcoord = base::gcoord;
   using bmap = std::array<std::array<boundary_type, 2>, 3>;
@@ -251,7 +252,8 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     Color Task.
    *--------------------------------------------------------------------------*/
 
-  static coloring color(std::size_t num_colors, gcoord axis_extents) {
+  static coloring
+  color(std::size_t num_colors, gcoord axis_extents, periodic_axes p) {
     index_definition idef;
     idef.axes = flecsi::topo::narray_utils::make_axes(num_colors, axis_extents);
     std::size_t ai{0};
@@ -259,6 +261,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     for(auto & a : idef.axes) {
       a.hdepth = 2;
       a.bdepth = 2;
+      a.periodic = p[ai];
     } // for
 
     return {{idef}};

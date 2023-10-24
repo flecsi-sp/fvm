@@ -44,7 +44,7 @@ action::initialize(control_policy & cp) {
     Set boundaries.
    *--------------------------------------------------------------------------*/
 
-  execute<tasks::init::boundaries>(bmap(gt),
+  auto bf = execute<tasks::init::boundaries>(bmap(gt),
     utils::mesh_boundary(config["boundaries"]["xlow"].as<std::string>()),
     utils::mesh_boundary(config["boundaries"]["xhigh"].as<std::string>()),
     utils::mesh_boundary(config["boundaries"]["ylow"].as<std::string>()),
@@ -62,7 +62,7 @@ action::initialize(control_policy & cp) {
 
   {
     mesh::cslot coloring;
-    coloring.allocate(num_colors, axis_extents);
+    coloring.allocate(num_colors, axis_extents, bf.get());
 
     mesh::grect geom;
     geom[0][0] = config["coords"][0][0].as<double>();
@@ -106,7 +106,8 @@ action::initialize(control_policy & cp) {
     execute<tasks::init::shock<sod>>(m, r(m), ru(m), rE(m), gamma(gt));
   }
   else if(config["problem"].as<std::string>() == "rankine-hugoniot") {
-    execute<tasks::init::shock<rankine_hugoniot>>(m, r(m), ru(m), rE(m), gamma(gt));
+    execute<tasks::init::shock<rankine_hugoniot>>(
+      m, r(m), ru(m), rE(m), gamma(gt));
   }
   else {
     flog_fatal(

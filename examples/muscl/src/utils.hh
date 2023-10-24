@@ -28,5 +28,5 @@ mesh_boundary(std::string const & b) {
 } // mesh_boundary
 
 } // namespace muscl::utils
-  //
+
 #endif // MUSCL_UTILS_HH
