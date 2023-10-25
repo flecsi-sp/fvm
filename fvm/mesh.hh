@@ -81,6 +81,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
   using bmap = std::array<std::array<boundary_type, 2>, 3>;
   using grect = std::array<std::array<double, 3>, 3>;
   using colors = base::colors;
+  using color_coord = std::array<flecsi::Color, 3>;
   using axis_definition = base::axis_definition;
   using index_definition = base::index_definition;
 
@@ -244,6 +245,18 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     bool is_high() {
       return B::template is_high<mesh::cells, A>();
     } // is_high
+
+    color_coord color_indeces() const {
+      return {B::template get_axis<mesh::cells, mesh::x_axis>().color_index,
+        B::template get_axis<mesh::cells, mesh::y_axis>().color_index,
+        B::template get_axis<mesh::cells, mesh::z_axis>().color_index};
+    } // color_indeces
+
+    color_coord axis_colors() const {
+      return {B::template get_axis<mesh::cells, mesh::x_axis>().colors,
+        B::template get_axis<mesh::cells, mesh::y_axis>().colors,
+        B::template get_axis<mesh::cells, mesh::z_axis>().colors};
+    } // axis_colors
 
   }; // interface
 

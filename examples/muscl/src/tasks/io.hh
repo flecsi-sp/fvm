@@ -21,6 +21,15 @@ raw(muscl::io::name const & base,
   std::ofstream file(
     base.str() + "-" + std::to_string(flecsi::process()) + ".raw");
 
+  {
+    auto ccoords = m.color_indeces();
+    file << ccoords[mesh::x_axis] << " " << ccoords[mesh::y_axis] << " "
+         << ccoords[mesh::z_axis] << std::endl;
+    auto ccolors = m.axis_colors();
+    file << ccolors[mesh::x_axis] << " " << ccolors[mesh::y_axis] << " "
+         << ccolors[mesh::z_axis] << std::endl;
+  } // scope
+
   // Density
   for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {

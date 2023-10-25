@@ -61,9 +61,6 @@ action::initialize(control_policy & cp) {
   ct.allocate(num_colors);
 
   {
-    mesh::cslot coloring;
-    coloring.allocate(num_colors, axis_extents, bf.get());
-
     mesh::grect geom;
     geom[0][0] = config["coords"][0][0].as<double>();
     geom[0][1] = config["coords"][1][0].as<double>();
@@ -72,7 +69,7 @@ action::initialize(control_policy & cp) {
     geom[2][0] = config["coords"][0][2].as<double>();
     geom[2][1] = config["coords"][1][2].as<double>();
 
-    m.allocate(coloring.get(), geom);
+    m.allocate(mesh::mpi_coloring{num_colors, axis_extents, bf.get()}, geom);
   } // scope
 
   /*--------------------------------------------------------------------------*
