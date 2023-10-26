@@ -273,7 +273,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     for(auto & a : idef.axes) {
       a.hdepth = 2;
       a.bdepth = 2;
-      a.periodic = p[ai];
+      a.periodic = p[ai++];
     } // for
 
     return {{idef}};

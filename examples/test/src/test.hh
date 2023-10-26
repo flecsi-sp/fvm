@@ -78,7 +78,7 @@ execute() {
     m, f(m), bmap(gt));
 
   flecsi::execute<tasks::util::mesh_info<mesh::x_axis>>(m);
-  // flecsi::execute<tasks::util::cell_info<mesh::domain::quantities>>(m);
+  flecsi::execute<tasks::util::cell_info<mesh::domain::quantities>>(m);
   flecsi::execute<tasks::util::field_info<mesh::domain::all>>(m, f(m), 2);
 
   return 0;
