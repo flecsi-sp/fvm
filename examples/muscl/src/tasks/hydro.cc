@@ -10,25 +10,25 @@ muscl::tasks::hydro::update_primitives(mesh::accessor<ro> m,
   field<vec3>::accessor<wo, ro> u_a,
   field<double>::accessor<wo, ro> p_a,
   single<double>::accessor<ro> gamma_a) {
-  auto r = m.mdspan<mesh::cells>(r_a);
-  auto ru = m.mdspan<mesh::cells>(ru_a);
-  auto rE = m.mdspan<mesh::cells>(rE_a);
-  auto u = m.mdspan<mesh::cells>(u_a);
-  auto p = m.mdspan<mesh::cells>(p_a);
+  auto r = m.mdcolex<mesh::cells>(r_a);
+  auto ru = m.mdcolex<mesh::cells>(ru_a);
+  auto rE = m.mdcolex<mesh::cells>(rE_a);
+  auto u = m.mdcolex<mesh::cells>(u_a);
+  auto p = m.mdcolex<mesh::cells>(p_a);
   auto const gamma = *gamma_a;
 
   // Initialize primitive quantities.
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
       for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-        u[k][j][i].x = ru[k][j][i].x / r[k][j][i];
-        u[k][j][i].y = ru[k][j][i].y / r[k][j][i];
-        u[k][j][i].z = ru[k][j][i].z / r[k][j][i];
-        p[k][j][i] =
-          (gamma - 1.0) * (rE[k][j][i] - 0.5 * r[k][j][i] *
-                                           (utils::sqr(u[k][j][i].x) +
-                                             utils::sqr(u[k][j][i].y) +
-                                             utils::sqr(u[k][j][i].z)));
+        u(i, j, k).x = ru(i, j, k).x / r(i, j, k);
+        u(i, j, k).y = ru(i, j, k).y / r(i, j, k);
+        u(i, j, k).z = ru(i, j, k).z / r(i, j, k);
+        p(i, j, k) =
+          (gamma - 1.0) * (rE(i, j, k) - 0.5 * r(i, j, k) *
+                                           (utils::sqr(u(i, j, k).x) +
+                                             utils::sqr(u(i, j, k).y) +
+                                             utils::sqr(u(i, j, k).z)));
       } // for
     } // for
   } // for
@@ -41,9 +41,9 @@ muscl::tasks::hydro::update_eigenvalues(mesh::accessor<ro> m,
   field<double>::accessor<wo, ro> p_a,
   single<vec3>::accessor<wo> lmax_a,
   single<double>::accessor<ro> gamma_a) {
-  auto r = m.mdspan<mesh::cells>(r_a);
-  auto u = m.mdspan<mesh::cells>(u_a);
-  auto p = m.mdspan<mesh::cells>(p_a);
+  auto r = m.mdcolex<mesh::cells>(r_a);
+  auto u = m.mdcolex<mesh::cells>(u_a);
+  auto p = m.mdcolex<mesh::cells>(p_a);
   auto & lmax = *lmax_a;
   auto const gamma = *gamma_a;
 
@@ -54,10 +54,10 @@ muscl::tasks::hydro::update_eigenvalues(mesh::accessor<ro> m,
   for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
       for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-        const double c = std::sqrt(gamma * p[k][j][i] / r[k][j][i]);
-        lmax.x = std::max(std::abs(u[k][j][i].x) + c, lmax.x);
-        lmax.y = std::max(std::abs(u[k][j][i].y) + c, lmax.y);
-        lmax.z = std::max(std::abs(u[k][j][i].z) + c, lmax.z);
+        const double c = std::sqrt(gamma * p(i, j, k) / r(i, j, k));
+        lmax.x = std::max(std::abs(u(i, j, k).x) + c, lmax.x);
+        lmax.y = std::max(std::abs(u(i, j, k).y) + c, lmax.y);
+        lmax.z = std::max(std::abs(u(i, j, k).z) + c, lmax.z);
       } // for
     } // for
   } // for

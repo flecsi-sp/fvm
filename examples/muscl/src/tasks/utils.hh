@@ -15,12 +15,12 @@ print_conserved(mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> rE_a,
   flecsi::util::id zslice) {
   {
-    auto r = m.mdspan<mesh::cells>(r_a);
+    auto r = m.mdcolex<mesh::cells>(r_a);
     std::stringstream ss;
     ss << "DENSITY:" << std::endl;
     for(auto j : m.cells<mesh::y_axis, DM, true>()) {
       for(auto i : m.cells<mesh::x_axis, DM>()) {
-        ss << r[zslice][j][i] << " ";
+        ss << r(i, j, zslice) << " ";
       } // for
       ss << std::endl;
     } // for
@@ -29,12 +29,12 @@ print_conserved(mesh::accessor<ro> m,
   }
 #if 0
   {
-    auto ru = m.mdspan<mesh::cells>(ru_a);
+    auto ru = m.mdcolex<mesh::cells>(ru_a);
     std::stringstream ss;
     ss << "MOMENTUM:" << std::endl;
     for(auto j : m.cells<mesh::y_axis, DM, true>()) {
       for(auto i : m.cells<mesh::x_axis, DM>()) {
-        ss << ru[zslice][j][i] << " ";
+        ss << ru(i,j,zslice) << " ";
       } // for
       ss << std::endl;
     } // for
@@ -42,12 +42,12 @@ print_conserved(mesh::accessor<ro> m,
     flog(info) << ss.str() << std::endl;
   }
   {
-    auto rE = m.mdspan<mesh::cells>(rE_a);
+    auto rE = m.mdcolex<mesh::cells>(rE_a);
     std::stringstream ss;
     ss << "TOTAL ENERGY:" << std::endl;
     for(auto j : m.cells<mesh::y_axis, DM, true>()) {
       for(auto i : m.cells<mesh::x_axis, DM>()) {
-        ss << rE[zslice][j][i] << " ";
+        ss << rE(i,j,zslice) << " ";
       } // for
       ss << std::endl;
     } // for
@@ -64,12 +64,12 @@ print_primitives(mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> p_a,
   flecsi::util::id zslice) {
   {
-    auto u = m.mdspan<mesh::cells>(u_a);
+    auto u = m.mdcolex<mesh::cells>(u_a);
     std::stringstream ss;
     ss << "VELOCITY:" << std::endl;
     for(auto j : m.cells<mesh::y_axis, DM>()) {
       for(auto i : m.cells<mesh::x_axis, DM>()) {
-        ss << u[zslice][j][i] << " ";
+        ss << u(i, j, zslice) << " ";
       } // for
       ss << std::endl;
     } // for
@@ -77,12 +77,12 @@ print_primitives(mesh::accessor<ro> m,
     flog(info) << ss.str() << std::endl;
   }
   {
-    auto p = m.mdspan<mesh::cells>(p_a);
+    auto p = m.mdcolex<mesh::cells>(p_a);
     std::stringstream ss;
     ss << "PRESSURE:" << std::endl;
     for(auto j : m.cells<mesh::y_axis, DM>()) {
       for(auto i : m.cells<mesh::x_axis, DM>()) {
-        ss << p[zslice][j][i] << " ";
+        ss << p(i, j, zslice) << " ";
       } // for
       ss << std::endl;
     } // for

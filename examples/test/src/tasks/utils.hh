@@ -50,11 +50,11 @@ inline void
 field_info(mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> f_a,
   flecsi::util::id zslice) {
-  auto f = m.mdspan<mesh::cells>(f_a);
+  auto f = m.mdcolex<mesh::cells>(f_a);
   std::stringstream ss;
   for(auto j : m.cells<mesh::y_axis, DM, true>()) {
     for(auto i : m.cells<mesh::x_axis, DM>()) {
-      ss << f[zslice][j][i] << " ";
+      ss << f(i, j, zslice) << " ";
     } // for
     ss << std::endl;
   } // for

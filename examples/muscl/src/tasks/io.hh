@@ -14,9 +14,9 @@ raw(muscl::io::name const & base,
   field<double>::accessor<ro, ro> r_a,
   field<vec3>::accessor<ro, ro> ru_a,
   field<double>::accessor<ro, ro> rE_a) {
-  auto r = m.mdspan<mesh::cells>(r_a);
-  auto ru = m.mdspan<mesh::cells>(ru_a);
-  auto rE = m.mdspan<mesh::cells>(rE_a);
+  auto r = m.mdcolex<mesh::cells>(r_a);
+  auto ru = m.mdcolex<mesh::cells>(ru_a);
+  auto rE = m.mdcolex<mesh::cells>(rE_a);
 
   std::ofstream file(
     base.str() + "-" + std::to_string(flecsi::process()) + ".raw");
@@ -34,7 +34,7 @@ raw(muscl::io::name const & base,
   for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
       for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
-        file << r[k][j][i] << std::endl;
+        file << r(i, j, k) << std::endl;
       } // for
     } // for
   } // for
@@ -43,7 +43,7 @@ raw(muscl::io::name const & base,
   for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
       for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
-        file << ru[k][j][i].x << " " << ru[k][j][i].y << " " << ru[k][j][i].z
+        file << ru(i, j, k).x << " " << ru(i, j, k).y << " " << ru(i, j, k).z
              << std::endl;
       } // for
     } // for
@@ -53,7 +53,7 @@ raw(muscl::io::name const & base,
   for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
     for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
       for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
-        file << rE[k][j][i] << std::endl;
+        file << rE(i, j, k) << std::endl;
       } // for
     } // for
   } // for

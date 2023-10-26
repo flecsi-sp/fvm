@@ -9,24 +9,24 @@ flow(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
   field<vec3>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a) {
-  auto r = m.mdspan<mesh::cells>(r_a);
-  auto ru = m.mdspan<mesh::cells>(ru_a);
-  auto rE = m.mdspan<mesh::cells>(rE_a);
+  auto r = m.mdcolex<mesh::cells>(r_a);
+  auto ru = m.mdcolex<mesh::cells>(ru_a);
+  auto rE = m.mdcolex<mesh::cells>(rE_a);
 
   if constexpr(A == mesh::axis::x_axis) {
     if(B == mesh::boundary::low && m.is_low<A>()) {
       for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
         for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
-          r[k][j][0] = r[k][j][2];
-          r[k][j][1] = r[k][j][2];
-          ru[k][j][0].x = ru[k][j][2].x;
-          ru[k][j][1].x = ru[k][j][2].x;
-          ru[k][j][0].y = ru[k][j][2].y;
-          ru[k][j][1].y = ru[k][j][2].y;
-          ru[k][j][0].z = ru[k][j][2].z;
-          ru[k][j][1].z = ru[k][j][2].z;
-          rE[k][j][0] = rE[k][j][2];
-          rE[k][j][1] = rE[k][j][2];
+          r(0, j, k) = r(2, j, k);
+          r(1, j, k) = r(2, j, k);
+          ru(0, j, k).x = ru(2, j, k).x;
+          ru(1, j, k).x = ru(2, j, k).x;
+          ru(0, j, k).y = ru(2, j, k).y;
+          ru(1, j, k).y = ru(2, j, k).y;
+          ru(0, j, k).z = ru(2, j, k).z;
+          ru(1, j, k).z = ru(2, j, k).z;
+          rE(0, j, k) = rE(2, j, k);
+          rE(1, j, k) = rE(2, j, k);
         } // for
       } // for
     }
@@ -34,16 +34,16 @@ flow(mesh::accessor<ro> m,
       const std::size_t i = m.size<A, mesh::all>();
       for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
         for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
-          r[k][j][i - 1] = r[k][j][i - 3];
-          r[k][j][i - 2] = r[k][j][i - 3];
-          ru[k][j][i - 1].x = ru[k][j][i - 3].x;
-          ru[k][j][i - 2].x = ru[k][j][i - 3].x;
-          ru[k][j][i - 1].y = ru[k][j][i - 3].y;
-          ru[k][j][i - 2].y = ru[k][j][i - 3].y;
-          ru[k][j][i - 1].z = ru[k][j][i - 3].z;
-          ru[k][j][i - 2].z = ru[k][j][i - 3].z;
-          rE[k][j][i - 1] = rE[k][j][i - 3];
-          rE[k][j][i - 2] = rE[k][j][i - 3];
+          r(i - 1, j, k) = r(i - 3, j, k);
+          r(i - 2, j, k) = r(i - 3, j, k);
+          ru(i - 1, j, k).x = ru(i - 3, j, k).x;
+          ru(i - 2, j, k).x = ru(i - 3, j, k).x;
+          ru(i - 1, j, k).y = ru(i - 3, j, k).y;
+          ru(i - 2, j, k).y = ru(i - 3, j, k).y;
+          ru(i - 1, j, k).z = ru(i - 3, j, k).z;
+          ru(i - 2, j, k).z = ru(i - 3, j, k).z;
+          rE(i - 1, j, k) = rE(i - 3, j, k);
+          rE(i - 2, j, k) = rE(i - 3, j, k);
         } // for
       } // for
     } // if
@@ -52,16 +52,16 @@ flow(mesh::accessor<ro> m,
     if(B == mesh::boundary::low && m.is_low<A>()) {
       for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-          r[k][0][i] = r[k][2][i];
-          r[k][1][i] = r[k][2][i];
-          ru[k][0][i].x = ru[k][2][i].x;
-          ru[k][1][i].x = ru[k][2][i].x;
-          ru[k][0][i].y = ru[k][2][i].y;
-          ru[k][1][i].y = ru[k][2][i].y;
-          ru[k][0][i].z = ru[k][2][i].z;
-          ru[k][1][i].z = ru[k][2][i].z;
-          rE[k][0][i] = rE[k][2][i];
-          rE[k][1][i] = rE[k][2][i];
+          r(i, 0, k) = r(i, 2, k);
+          r(i, 1, k) = r(i, 2, k);
+          ru(i, 0, k).x = ru(i, 2, k).x;
+          ru(i, 1, k).x = ru(i, 2, k).x;
+          ru(i, 0, k).y = ru(i, 2, k).y;
+          ru(i, 1, k).y = ru(i, 2, k).y;
+          ru(i, 0, k).z = ru(i, 2, k).z;
+          ru(i, 1, k).z = ru(i, 2, k).z;
+          rE(i, 0, k) = rE(i, 2, k);
+          rE(i, 1, k) = rE(i, 2, k);
         } // for
       } // for
     }
@@ -69,16 +69,16 @@ flow(mesh::accessor<ro> m,
       const std::size_t j = m.size<A, mesh::all>();
       for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-          r[k][j - 1][i] = r[k][j - 3][i];
-          r[k][j - 2][i] = r[k][j - 3][i];
-          ru[k][j - 1][i].x = ru[k][j - 3][i].x;
-          ru[k][j - 2][i].x = ru[k][j - 3][i].x;
-          ru[k][j - 1][i].y = ru[k][j - 3][i].y;
-          ru[k][j - 2][i].y = ru[k][j - 3][i].y;
-          ru[k][j - 1][i].z = ru[k][j - 3][i].z;
-          ru[k][j - 2][i].z = ru[k][j - 3][i].z;
-          rE[k][j - 1][i] = rE[k][j - 3][i];
-          rE[k][j - 2][i] = rE[k][j - 3][i];
+          r(i, j - 1, k) = r(i, j - 3, k);
+          r(i, j - 2, k) = r(i, j - 3, k);
+          ru(i, j - 1, k).x = ru(i, j - 3, k).x;
+          ru(i, j - 2, k).x = ru(i, j - 3, k).x;
+          ru(i, j - 1, k).y = ru(i, j - 3, k).y;
+          ru(i, j - 2, k).y = ru(i, j - 3, k).y;
+          ru(i, j - 1, k).z = ru(i, j - 3, k).z;
+          ru(i, j - 2, k).z = ru(i, j - 3, k).z;
+          rE(i, j - 1, k) = rE(i, j - 3, k);
+          rE(i, j - 2, k) = rE(i, j - 3, k);
         } // for
       } // for
     } // if
@@ -87,16 +87,16 @@ flow(mesh::accessor<ro> m,
     if(B == mesh::boundary::low && m.is_low<A>()) {
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-          r[0][j][i] = r[2][j][i];
-          r[1][j][i] = r[2][j][i];
-          ru[0][j][i].x = ru[2][j][i].x;
-          ru[1][j][i].x = ru[2][j][i].x;
-          ru[0][j][i].y = ru[2][j][i].y;
-          ru[1][j][i].y = ru[2][j][i].y;
-          ru[0][j][i].z = ru[2][j][i].z;
-          ru[1][j][i].z = ru[2][j][i].z;
-          rE[0][j][i] = rE[2][j][i];
-          rE[1][j][i] = rE[2][j][i];
+          r(i, j, 0) = r(i, j, 2);
+          r(i, j, 1) = r(i, j, 2);
+          ru(i, j, 0).x = ru(i, j, 2).x;
+          ru(i, j, 1).x = ru(i, j, 2).x;
+          ru(i, j, 0).y = ru(i, j, 2).y;
+          ru(i, j, 1).y = ru(i, j, 2).y;
+          ru(i, j, 0).z = ru(i, j, 2).z;
+          ru(i, j, 1).z = ru(i, j, 2).z;
+          rE(i, j, 0) = rE(i, j, 2);
+          rE(i, j, 1) = rE(i, j, 2);
         } // for
       } // for
     }
@@ -104,16 +104,16 @@ flow(mesh::accessor<ro> m,
       const std::size_t k = m.size<A, mesh::all>();
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-          r[k - 1][j][i] = r[k - 3][j][i];
-          r[k - 2][j][i] = r[k - 3][j][i];
-          ru[k - 1][j][i].x = ru[k - 3][j][i].x;
-          ru[k - 2][j][i].x = ru[k - 3][j][i].x;
-          ru[k - 1][j][i].y = ru[k - 3][j][i].y;
-          ru[k - 2][j][i].y = ru[k - 3][j][i].y;
-          ru[k - 1][j][i].z = ru[k - 3][j][i].z;
-          ru[k - 2][j][i].z = ru[k - 3][j][i].z;
-          rE[k - 1][j][i] = rE[k - 3][j][i];
-          rE[k - 2][j][i] = rE[k - 3][j][i];
+          r(i, j, k - 1) = r(i, j, k - 3);
+          r(i, j, k - 2) = r(i, j, k - 3);
+          ru(i, j, k - 1).x = ru(i, j, k - 3).x;
+          ru(i, j, k - 2).x = ru(i, j, k - 3).x;
+          ru(i, j, k - 1).y = ru(i, j, k - 3).y;
+          ru(i, j, k - 2).y = ru(i, j, k - 3).y;
+          ru(i, j, k - 1).z = ru(i, j, k - 3).z;
+          ru(i, j, k - 2).z = ru(i, j, k - 3).z;
+          rE(i, j, k - 1) = rE(i, j, k - 3);
+          rE(i, j, k - 2) = rE(i, j, k - 3);
         } // for
       } // for
     } // if
@@ -126,24 +126,24 @@ reflecting(mesh::accessor<ro> m,
   field<double>::accessor<rw, ro> r_a,
   field<vec3>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a) {
-  auto r = m.mdspan<mesh::cells>(r_a);
-  auto ru = m.mdspan<mesh::cells>(ru_a);
-  auto rE = m.mdspan<mesh::cells>(rE_a);
+  auto r = m.mdcolex<mesh::cells>(r_a);
+  auto ru = m.mdcolex<mesh::cells>(ru_a);
+  auto rE = m.mdcolex<mesh::cells>(rE_a);
 
   if constexpr(A == mesh::axis::x_axis) {
     if(B == mesh::boundary::low && m.is_low<A>()) {
       for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
         for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
-          r[k][j][0] = r[k][j][3];
-          r[k][j][1] = r[k][j][2];
-          ru[k][j][0].x = ru[k][j][3].x;
-          ru[k][j][1].x = ru[k][j][2].x;
-          ru[k][j][0].y = ru[k][j][3].y;
-          ru[k][j][1].y = ru[k][j][2].y;
-          ru[k][j][0].z = ru[k][j][3].z;
-          ru[k][j][1].z = ru[k][j][2].z;
-          rE[k][j][0] = rE[k][j][3];
-          rE[k][j][1] = rE[k][j][2];
+          r(0, j, k) = r(3, j, k);
+          r(1, j, k) = r(2, j, k);
+          ru(0, j, k).x = ru(3, j, k).x;
+          ru(1, j, k).x = ru(2, j, k).x;
+          ru(0, j, k).y = ru(3, j, k).y;
+          ru(1, j, k).y = ru(2, j, k).y;
+          ru(0, j, k).z = ru(3, j, k).z;
+          ru(1, j, k).z = ru(2, j, k).z;
+          rE(0, j, k) = rE(3, j, k);
+          rE(1, j, k) = rE(2, j, k);
         } // for
       } // for
     }
@@ -151,16 +151,16 @@ reflecting(mesh::accessor<ro> m,
       const std::size_t i = m.size<A, mesh::all>();
       for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
         for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
-          r[k][j][i - 1] = r[k][j][i - 4];
-          r[k][j][i - 2] = r[k][j][i - 3];
-          ru[k][j][i - 1].x = ru[k][j][i - 4].x;
-          ru[k][j][i - 2].x = ru[k][j][i - 3].x;
-          ru[k][j][i - 1].y = ru[k][j][i - 4].y;
-          ru[k][j][i - 2].y = ru[k][j][i - 3].y;
-          ru[k][j][i - 1].z = ru[k][j][i - 4].z;
-          ru[k][j][i - 2].z = ru[k][j][i - 3].z;
-          rE[k][j][i - 1] = rE[k][j][i - 4];
-          rE[k][j][i - 2] = rE[k][j][i - 3];
+          r(i - 1, j, k) = r(i - 4, j, k);
+          r(i - 2, j, k) = r(i - 3, j, k);
+          ru(i - 1, j, k).x = ru(i - 4, j, k).x;
+          ru(i - 2, j, k).x = ru(i - 3, j, k).x;
+          ru(i - 1, j, k).y = ru(i - 4, j, k).y;
+          ru(i - 2, j, k).y = ru(i - 3, j, k).y;
+          ru(i - 1, j, k).z = ru(i - 4, j, k).z;
+          ru(i - 2, j, k).z = ru(i - 3, j, k).z;
+          rE(i - 1, j, k) = rE(i - 4, j, k);
+          rE(i - 2, j, k) = rE(i - 3, j, k);
         } // for
       } // for
     } // if
@@ -169,16 +169,16 @@ reflecting(mesh::accessor<ro> m,
     if(B == mesh::boundary::low && m.is_low<A>()) {
       for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-          r[k][0][i] = r[k][3][i];
-          r[k][1][i] = r[k][2][i];
-          ru[k][0][i].x = ru[k][3][i].x;
-          ru[k][1][i].x = ru[k][2][i].x;
-          ru[k][0][i].y = ru[k][3][i].y;
-          ru[k][1][i].y = ru[k][2][i].y;
-          ru[k][0][i].z = ru[k][3][i].z;
-          ru[k][1][i].z = ru[k][2][i].z;
-          rE[k][0][i] = rE[k][3][i];
-          rE[k][1][i] = rE[k][2][i];
+          r(i, 0, k) = r(i, 3, k);
+          r(i, 1, k) = r(i, 2, k);
+          ru(i, 0, k).x = ru(i, 3, k).x;
+          ru(i, 1, k).x = ru(i, 2, k).x;
+          ru(i, 0, k).y = ru(i, 3, k).y;
+          ru(i, 1, k).y = ru(i, 2, k).y;
+          ru(i, 0, k).z = ru(i, 3, k).z;
+          ru(i, 1, k).z = ru(i, 2, k).z;
+          rE(i, 0, k) = rE(i, 3, k);
+          rE(i, 1, k) = rE(i, 2, k);
         } // for
       } // for
     }
@@ -186,16 +186,16 @@ reflecting(mesh::accessor<ro> m,
       const std::size_t j = m.size<A, mesh::all>();
       for(auto k : m.cells<mesh::z_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-          r[k][j - 1][i] = r[k][j - 4][i];
-          r[k][j - 2][i] = r[k][j - 3][i];
-          ru[k][j - 1][i].x = ru[k][j - 4][i].x;
-          ru[k][j - 2][i].x = ru[k][j - 3][i].x;
-          ru[k][j - 1][i].y = ru[k][j - 4][i].y;
-          ru[k][j - 2][i].y = ru[k][j - 3][i].y;
-          ru[k][j - 1][i].z = ru[k][j - 4][i].z;
-          ru[k][j - 2][i].z = ru[k][j - 3][i].z;
-          rE[k][j - 1][i] = rE[k][j - 4][i];
-          rE[k][j - 2][i] = rE[k][j - 3][i];
+          r(i, j - 1, k) = r(i, j - 4, k);
+          r(i, j - 2, k) = r(i, j - 3, k);
+          ru(i, j - 1, k).x = ru(i, j - 4, k).x;
+          ru(i, j - 2, k).x = ru(i, j - 3, k).x;
+          ru(i, j - 1, k).y = ru(i, j - 4, k).y;
+          ru(i, j - 2, k).y = ru(i, j - 3, k).y;
+          ru(i, j - 1, k).z = ru(i, j - 4, k).z;
+          ru(i, j - 2, k).z = ru(i, j - 3, k).z;
+          rE(i, j - 1, k) = rE(i, j - 4, k);
+          rE(i, j - 2, k) = rE(i, j - 3, k);
         } // for
       } // for
     } // if
@@ -204,16 +204,16 @@ reflecting(mesh::accessor<ro> m,
     if(B == mesh::boundary::low && m.is_low<A>()) {
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-          r[0][j][i] = r[3][j][i];
-          r[1][j][i] = r[2][j][i];
-          ru[0][j][i].x = ru[3][j][i].x;
-          ru[1][j][i].x = ru[2][j][i].x;
-          ru[0][j][i].y = ru[3][j][i].y;
-          ru[1][j][i].y = ru[2][j][i].y;
-          ru[0][j][i].z = ru[3][j][i].z;
-          ru[1][j][i].z = ru[2][j][i].z;
-          rE[0][j][i] = rE[3][j][i];
-          rE[1][j][i] = rE[2][j][i];
+          r(i, j, 0) = r(i, j, 3);
+          r(i, j, 1) = r(i, j, 2);
+          ru(i, j, 0).x = ru(i, j, 3).x;
+          ru(i, j, 1).x = ru(i, j, 2).x;
+          ru(i, j, 0).y = ru(i, j, 3).y;
+          ru(i, j, 1).y = ru(i, j, 2).y;
+          ru(i, j, 0).z = ru(i, j, 3).z;
+          ru(i, j, 1).z = ru(i, j, 2).z;
+          rE(i, j, 0) = rE(i, j, 3);
+          rE(i, j, 1) = rE(i, j, 2);
         } // for
       } // for
     }
@@ -221,16 +221,16 @@ reflecting(mesh::accessor<ro> m,
       const std::size_t k = m.size<A, mesh::all>();
       for(auto j : m.cells<mesh::y_axis, mesh::quantities>()) {
         for(auto i : m.cells<mesh::x_axis, mesh::quantities>()) {
-          r[k - 1][j][i] = r[k - 4][j][i];
-          r[k - 2][j][i] = r[k - 3][j][i];
-          ru[k - 1][j][i].x = ru[k - 4][j][i].x;
-          ru[k - 2][j][i].x = ru[k - 3][j][i].x;
-          ru[k - 1][j][i].y = ru[k - 4][j][i].y;
-          ru[k - 2][j][i].y = ru[k - 3][j][i].y;
-          ru[k - 1][j][i].z = ru[k - 4][j][i].z;
-          ru[k - 2][j][i].z = ru[k - 3][j][i].z;
-          rE[k - 1][j][i] = rE[k - 4][j][i];
-          rE[k - 2][j][i] = rE[k - 3][j][i];
+          r(i, j, k - 1) = r(i, j, k - 4);
+          r(i, j, k - 2) = r(i, j, k - 3);
+          ru(i, j, k - 1).x = ru(i, j, k - 4).x;
+          ru(i, j, k - 2).x = ru(i, j, k - 3).x;
+          ru(i, j, k - 1).y = ru(i, j, k - 4).y;
+          ru(i, j, k - 2).y = ru(i, j, k - 3).y;
+          ru(i, j, k - 1).z = ru(i, j, k - 4).z;
+          ru(i, j, k - 2).z = ru(i, j, k - 3).z;
+          rE(i, j, k - 1) = rE(i, j, k - 4);
+          rE(i, j, k - 2) = rE(i, j, k - 3);
         } // for
       } // for
     } // if

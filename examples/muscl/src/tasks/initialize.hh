@@ -131,9 +131,9 @@ shock(mesh::accessor<ro> m,
   field<vec3>::accessor<rw, ro> ru_a,
   field<double>::accessor<rw, ro> rE_a,
   single<double>::accessor<ro> gamma_a) {
-  auto r = m.mdspan<mesh::cells>(r_a);
-  auto ru = m.mdspan<mesh::cells>(ru_a);
-  auto rE = m.mdspan<mesh::cells>(rE_a);
+  auto r = m.mdcolex<mesh::cells>(r_a);
+  auto ru = m.mdcolex<mesh::cells>(ru_a);
+  auto rE = m.mdcolex<mesh::cells>(rE_a);
   auto const gamma = *gamma_a;
   const double mult = 1.0 / (gamma - 1.0);
 
@@ -143,21 +143,21 @@ shock(mesh::accessor<ro> m,
         const auto x = m.head<mesh::x_axis>(i);
 
         if(x < T::x0) {
-          r[k][j][i] = T::rL;
-          ru[k][j][i].x = T::rL * T::uL;
-          ru[k][j][i].y = T::rL * T::vL;
-          ru[k][j][i].z = T::rL * T::wL;
-          rE[k][j][i] =
+          r(i, j, k) = T::rL;
+          ru(i, j, k).x = T::rL * T::uL;
+          ru(i, j, k).y = T::rL * T::vL;
+          ru(i, j, k).z = T::rL * T::wL;
+          rE(i, j, k) =
             mult * T::pL +
             0.5 * T::rL *
               (utils::sqr(T::uL) + utils::sqr(T::vL) + utils::sqr(T::wL));
         }
         else {
-          r[k][j][i] = T::rR;
-          ru[k][j][i].x = T::rR * T::uR;
-          ru[k][j][i].y = T::rR * T::vR;
-          ru[k][j][i].z = T::rR * T::wR;
-          rE[k][j][i] =
+          r(i, j, k) = T::rR;
+          ru(i, j, k).x = T::rR * T::uR;
+          ru(i, j, k).y = T::rR * T::vR;
+          ru(i, j, k).z = T::rR * T::wR;
+          rE(i, j, k) =
             mult * T::pR +
             0.5 * T::rR *
               (utils::sqr(T::uR) + utils::sqr(T::vR) + utils::sqr(T::wR));
