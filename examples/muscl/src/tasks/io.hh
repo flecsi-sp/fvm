@@ -8,8 +8,7 @@
 
 namespace muscl::tasks::io {
 
-void
-raw(muscl::io::name const & base,
+void inline raw(muscl::io::name const & base,
   mesh::accessor<ro> m,
   field<double>::accessor<ro, ro> r_a,
   field<vec3>::accessor<ro, ro> ru_a,
@@ -20,6 +19,13 @@ raw(muscl::io::name const & base,
 
   std::ofstream file(
     base.str() + "-" + std::to_string(flecsi::process()) + ".raw");
+
+  file << m.size<mesh::x_axis, mesh::domain::quantities>() << " "
+       << m.size<mesh::y_axis, mesh::domain::quantities>() << " "
+       << m.size<mesh::z_axis, mesh::domain::quantities>() << std::endl;
+  file << m.size<mesh::x_axis, mesh::domain::global>() << " "
+       << m.size<mesh::y_axis, mesh::domain::global>() << " "
+       << m.size<mesh::z_axis, mesh::domain::global>() << std::endl;
 
   {
     auto ccoords = m.color_indeces();
