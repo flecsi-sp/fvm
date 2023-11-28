@@ -4,6 +4,7 @@
 #include <flecsi/execution.hh>
 
 namespace muscl::opt {
+
 inline flecsi::program_option<std::string> config("yaml file",
   "The yaml config file.",
   1,

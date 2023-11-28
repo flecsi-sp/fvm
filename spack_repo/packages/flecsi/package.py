@@ -3,7 +3,7 @@ from spack.pkg.builtin.flecsi import Flecsi
 
 class Flecsi(Flecsi):
     git = "https://github.com/tuxfan/flecsi.git"
-    version("2.3-fvm", commit="c919855bdaa2add3144b281541b99c1612432c75")
+    version("2.3-fvm", commit="915d8172b1ae2c8005767f293dfd93b10aa5a952")
 
     # since we compile with -Wextra -Werror for development
     # and https://gitlab.kitware.com/cmake/cmake/-/issues/23141

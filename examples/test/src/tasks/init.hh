@@ -1,5 +1,5 @@
-#ifndef TEST_TASKS_INITIALIZE_HH
-#define TEST_TASKS_INITIALIZE_HH
+#ifndef TEST_TASKS_INIT_HH
+#define TEST_TASKS_INIT_HH
 
 #include "../state.hh"
 
@@ -87,4 +87,4 @@ boundary(mesh::accessor<ro> m,
 
 } // namespace test::tasks::init
 
-#endif // TEST_TASKS_INITIALIZE_HH
+#endif // TEST_TASKS_INIT_HH

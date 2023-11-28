@@ -10,7 +10,7 @@ find_package(yaml-cpp REQUIRED)
 
 add_executable(test
   src/test.cc
-  src/tasks/initialize.cc
+  src/tasks/init.cc
 )
 
 #------------------------------------------------------------------------------#

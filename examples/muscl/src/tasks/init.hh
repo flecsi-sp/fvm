@@ -1,5 +1,5 @@
-#ifndef MUSCL_TASKS_INITIALIZE_HH
-#define MUSCL_TASKS_INITIALIZE_HH
+#ifndef MUSCL_TASKS_INIT_HH
+#define MUSCL_TASKS_INIT_HH
 
 #include "../types.hh"
 #include "../utils.hh"
@@ -170,4 +170,4 @@ shock(mesh::accessor<ro> m,
 } // namespace tasks::init
 } // namespace muscl
 
-#endif // MUSCL_TASKS_INITIALIZE_HH
+#endif // MUSCL_TASKS_INIT_HH

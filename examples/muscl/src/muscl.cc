@@ -1,7 +1,7 @@
 #include "advance.hh"
 #include "analyze.hh"
 #include "control.hh"
-#include "initialize.hh"
+#include "init.hh"
 
 #include <flecsi/runtime.hh>
 

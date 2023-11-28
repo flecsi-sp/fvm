@@ -6,7 +6,7 @@
 
 #include "options.hh"
 #include "state.hh"
-#include "tasks/initialize.hh"
+#include "tasks/init.hh"
 #include "tasks/utils.hh"
 
 #include <yaml-cpp/yaml.h>

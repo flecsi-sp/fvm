@@ -1,9 +1,9 @@
-#include "initialize.hh"
+#include "init.hh"
 #include "options.hh"
 #include "state.hh"
 #include "tasks/boundary.hh"
 #include "tasks/hydro.hh"
-#include "tasks/initialize.hh"
+#include "tasks/init.hh"
 #include "tasks/utils.hh"
 
 #include <flecsi/flog.hh>

@@ -1,4 +1,4 @@
-#include "initialize.hh"
+#include "init.hh"
 
 using namespace test;
 
