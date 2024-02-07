@@ -2,7 +2,7 @@
 
    <br />
 
-.. _api:
+.. _fvm_api:
 
 API Reference
 *************
