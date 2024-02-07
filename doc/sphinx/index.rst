@@ -8,6 +8,6 @@ implementations of the finite volume method (FVM) using the
 .. toctree::
   :caption: Contents:
 
-  src/api
+  fvm/api
 
 .. vim: set tabstop=2 shiftwidth=2 expandtab fo=cqt tw=72 :
