@@ -24,6 +24,7 @@ main(int argc, char ** argv) {
   run::config cfg;
   cfg.flog.tags = {opt::flog_tags};
   cfg.flog.verbose = {opt::flog_verbose};
+  cfg.flog.process = {opt::flog_process};
   const runtime run(cfg);
 
   flog::add_output_stream("clog", std::clog, true);
