@@ -37,6 +37,11 @@ inline flecsi::program_option<int> flog_verbose("FLOG Options",
   " decorations added by flog and will only output the user's message.",
   {{flecsi::option_default, 0}});
 
+inline flecsi::program_option<int> flog_process("FLOG Options",
+  "process,p",
+  "Specify output process. Passing '-1' will enable output from all processes.",
+  {{flecsi::option_default, 0}});
+
 } // namespace muscl::opt
 
 #endif // MUSCL_OPTIONS_HH
