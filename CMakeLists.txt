@@ -73,6 +73,7 @@ if(PROJECT_IS_TOP_LEVEL)
 
   if(ENABLE_DOCUMENTATION)
     include(FleCSI/documentation)
+    include(FleCSI/subdirlist)
     include(deploy)
 
     option(ENABLE_DOXYGEN "Enable Doxygen documentation" ON)
@@ -80,24 +81,33 @@ if(PROJECT_IS_TOP_LEVEL)
     mark_as_advanced(ENABLE_DOXYGEN)
     mark_as_advanced(ENABLE_SPHINX)
 
-    if(ENABLE_DOXYGEN)
-      include(FleCSI/doxygen)
-
-      # Create Doxygen output directory eagerly to avoid race condition.
-      file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/doc/api)
-
-      flecsi_add_doxygen_target(user
-        CONFIGS
-          ${CMAKE_SOURCE_DIR}/doc/doxygen/user.conf.in
-          ${CMAKE_SOURCE_DIR}/doc/doxygen/conf.in
-      )
-    endif()
-
     if(ENABLE_SPHINX)
-      include(FleCSI/sphinx)
+      # This seems dumb, but it needs to be done to make sure that
+      # changes in the documentation are captured. It may be possible
+      # to replace this with a custom command that would be cleaner.
+      file(COPY ${CMAKE_SOURCE_DIR}/doc/sphinx
+        DESTINATION ${CMAKE_BINARY_DIR}/doc
+      )
+      file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/doc/.sphinx)
+      file(RENAME ${CMAKE_BINARY_DIR}/doc/sphinx
+        ${CMAKE_BINARY_DIR}/doc/.sphinx
+      )
 
+      file(COPY ${CMAKE_SOURCE_DIR}/fvm
+        DESTINATION ${CMAKE_BINARY_DIR}/doc/.sphinx/fvm-src
+      )
+
+      make_subdirlist(_EXAMPLES ${CMAKE_SOURCE_DIR}/examples FALSE)
+      foreach(_EXAMPLE ${_EXAMPLES})
+        file(COPY ${CMAKE_SOURCE_DIR}/examples/${_EXAMPLE}/src
+          DESTINATION
+            ${CMAKE_BINARY_DIR}/doc/.sphinx/fvm-src/examples/${_EXAMPLE}
+        )
+      endforeach()
+
+      include(FleCSI/sphinx)
       flecsi_add_sphinx_target(main
-        CONFIG ${CMAKE_SOURCE_DIR}/doc/sphinx
+        CONFIG ${CMAKE_BINARY_DIR}/doc/.sphinx
         OUTPUT ${CMAKE_BINARY_DIR}/doc
       )
 
@@ -110,6 +120,19 @@ if(PROJECT_IS_TOP_LEVEL)
         DESTINATION
           ${CMAKE_INSTALL_PREFIX}/share/doc/fvm
         OPTIONAL
+      )
+    endif()
+
+    if(ENABLE_DOXYGEN)
+      include(FleCSI/doxygen)
+
+      # Create Doxygen output directory eagerly to avoid race condition.
+      file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/doc/fvm-api)
+
+      flecsi_add_doxygen_target(user
+        CONFIGS
+          ${CMAKE_SOURCE_DIR}/doc/doxygen/user.conf.in
+          ${CMAKE_SOURCE_DIR}/doc/doxygen/conf.in
       )
     endif()
 
@@ -134,4 +157,3 @@ target_include_directories(FleCSI-SP-FVM INTERFACE
 #------------------------------------------------------------------------------#
 
 add_subdirectory(examples/muscl)
-add_subdirectory(examples/test)
