@@ -67,78 +67,43 @@ if(PROJECT_IS_TOP_LEVEL)
   # Documentation
   #----------------------------------------------------------------------------#
 
-  set(PAGES_REPO "git@re-git.lanl.gov:flecsi-sp/fvm.git"
-    CACHE STRING "Pages repository for pages branch")
   option(ENABLE_DOCUMENTATION "Enable documentation" OFF)
 
   if(ENABLE_DOCUMENTATION)
     include(FleCSI/documentation)
-    include(FleCSI/subdirlist)
-    include(deploy)
+    include(FleCSI/doxygen)
+    include(FleCSI/sphinx)
 
-    option(ENABLE_DOXYGEN "Enable Doxygen documentation" ON)
-    option(ENABLE_SPHINX  "Enable Sphinx documentation"  ON)
-    mark_as_advanced(ENABLE_DOXYGEN)
-    mark_as_advanced(ENABLE_SPHINX)
+    # Avoid race condition by proactively creating output directory
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/.doxygen/xml)
+    flecsi_add_doxygen_target(fvm
+      CONFIGS
+        ${CMAKE_SOURCE_DIR}/doc/doxygen/fvm.conf.in
+        ${CMAKE_SOURCE_DIR}/doc/doxygen/conf.in
+    )
 
-    if(ENABLE_SPHINX)
-      # This seems dumb, but it needs to be done to make sure that
-      # changes in the documentation are captured. It may be possible
-      # to replace this with a custom command that would be cleaner.
-      file(COPY ${CMAKE_SOURCE_DIR}/doc/sphinx
-        DESTINATION ${CMAKE_BINARY_DIR}/doc
-      )
-      file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/doc/.sphinx)
-      file(RENAME ${CMAKE_BINARY_DIR}/doc/sphinx
-        ${CMAKE_BINARY_DIR}/doc/.sphinx
-      )
+    file(COPY ${CMAKE_SOURCE_DIR}/doc/sphinx
+      DESTINATION ${CMAKE_BINARY_DIR}
+    )
+    file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/.sphinx)
+    file(RENAME ${CMAKE_BINARY_DIR}/sphinx
+      ${CMAKE_BINARY_DIR}/.sphinx
+    )
+    # Create output directory
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/.sphinx/fvm/src)
+    execute_process(COMMAND
+      ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/fvm
+      ${CMAKE_BINARY_DIR}/.sphinx/fvm/src/fvm
+    )
+    execute_process(COMMAND
+      ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/examples
+      ${CMAKE_BINARY_DIR}/.sphinx/fvm/src/examples
+    )
 
-      file(COPY ${CMAKE_SOURCE_DIR}/fvm
-        DESTINATION ${CMAKE_BINARY_DIR}/doc/.sphinx/fvm-src
-      )
-
-      make_subdirlist(_EXAMPLES ${CMAKE_SOURCE_DIR}/examples FALSE)
-      foreach(_EXAMPLE ${_EXAMPLES})
-        file(COPY ${CMAKE_SOURCE_DIR}/examples/${_EXAMPLE}/src
-          DESTINATION
-            ${CMAKE_BINARY_DIR}/doc/.sphinx/fvm-src/examples/${_EXAMPLE}
-        )
-      endforeach()
-
-      include(FleCSI/sphinx)
-      flecsi_add_sphinx_target(main
-        CONFIG ${CMAKE_BINARY_DIR}/doc/.sphinx
-        OUTPUT ${CMAKE_BINARY_DIR}/doc
-      )
-
-      # This is for local install of the documentation. To deploy the
-      # documentation to the flecsi website, use the "deploy-documentation"
-      # target.
-      install(
-        DIRECTORY
-          ${CMAKE_BINARY_DIR}/doc/
-        DESTINATION
-          ${CMAKE_INSTALL_PREFIX}/share/doc/fvm
-        OPTIONAL
-      )
-    endif()
-
-    if(ENABLE_DOXYGEN)
-      include(FleCSI/doxygen)
-
-      # Create Doxygen output directory eagerly to avoid race condition.
-      file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/doc/fvm-api)
-
-      flecsi_add_doxygen_target(user
-        CONFIGS
-          ${CMAKE_SOURCE_DIR}/doc/doxygen/user.conf.in
-          ${CMAKE_SOURCE_DIR}/doc/doxygen/conf.in
-      )
-    endif()
-
-    if((NOT PAGES_REPO STREQUAL "") AND ENABLE_SPHINX AND ENABLE_DOXYGEN)
-      add_doc_deployment(deploy-docs PAGES_REPO ${PAGES_REPO})
-    endif()
+    flecsi_add_sphinx_target(main
+      CONFIG ${CMAKE_BINARY_DIR}/.sphinx
+      OUTPUT ${CMAKE_BINARY_DIR}/doc
+    )
   endif()
 endif()
 

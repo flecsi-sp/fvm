@@ -5,7 +5,12 @@ import sys
 extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
+    'breathe'
 ]
+
+# Breathe configuration
+breathe_projects = {"doxygen": "@CMAKE_BINARY_DIR@/.doxygen/xml"}
+breathe_default_project = "doxygen"
 
 # Add any paths that contain templates
 templates_path = ['_templates']
@@ -46,6 +51,14 @@ exclude_patterns = [
     '.DS_Store'
 ]
 
+# Ignore missing identifiers
+nitpick_ignore = [
+    ('cpp:identifier', 'quantities'),
+    ('cpp:identifier', 'axis'),
+    ('cpp:identifier', 'domain')
+]
+nitpick_ignore_regex = [ (r'cpp:identifier', r'flecsi.*') ]
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'stata-dark'
 
@@ -83,24 +96,3 @@ html_sidebars = {
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'FleCSISPFVMdoc'
-
-# Options for LaTeX output.
-latex_elements = {
-}
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'FleCSI-SP-FVM.tex', 'FleCSI-SP Documentation',
-     'FleCSI-SP Team', 'manual'),
-]
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-    (master_doc, 'FleCSI-SP-FVM', 'FleCSI-SP-FVM Documentation',
-     author, 'FleCSI-SP-FVM', 'One line description of project.',
-     'Miscellaneous'),
-]
