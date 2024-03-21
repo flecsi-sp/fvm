@@ -4,10 +4,19 @@
 
 .. _fvm_api:
 
-API Reference
-*************
+FVM Specislization API Reference
+********************************
 
-The `API documentation <../api/user/index.html>`_ describes the FVM
-specialization interface.
+.. .. doxygenstruct:: fvm::mesh
+..   :members:
+
+.. .. literalinclude:: src/fvm/mesh.hh
+..   :language: cpp
+..   :start-at: /// Mesh Interface.
+..   :end-at: }; // struct interface
+
+.. doxygenstruct:: fvm::mesh::interface
+  :members:
+
 
 .. vim: set tabstop=2 shiftwidth=2 expandtab fo=cqt tw=72 :
