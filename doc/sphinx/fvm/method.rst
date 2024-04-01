@@ -2,7 +2,7 @@
 
    <br />
 
-.. _fdm_problem:
+.. _fvm_problem:
 
 Example Problem
 ***************
