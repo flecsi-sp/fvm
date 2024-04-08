@@ -114,7 +114,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     /// @tparam A  The mesh axis.
     /// @tparam DM The mesh domain.
     template<axis A, domain DM = quantities>
-    auto size() {
+    auto size() const {
       if constexpr(DM == quantities) {
         return B::template size<mesh::cells, A, base::domain::logical>();
       }
@@ -234,7 +234,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     /// axis.
     /// @tparam A  The coordinate axis.
     template<axis A>
-    bool is_low() {
+    bool is_low() const {
       return B::template is_low<mesh::cells, A>();
     } // is_low
 
@@ -242,7 +242,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     /// axis.
     /// @tparam A  The coordinate axis.
     template<axis A>
-    bool is_high() {
+    bool is_high() const {
       return B::template is_high<mesh::cells, A>();
     } // is_high
 

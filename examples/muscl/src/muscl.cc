@@ -1,6 +1,7 @@
 #include "advance.hh"
 #include "analyze.hh"
 #include "control.hh"
+#include "finalize.hh"
 #include "init.hh"
 #include "options.hh"
 

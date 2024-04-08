@@ -8,7 +8,7 @@ using namespace flecsi;
 
 void
 muscl::action::analyze(control_policy & cp) {
-  flog(info) << "analyze action" << std::endl;
+  auto lm = data::launch::make(m);
   execute<tasks::io::raw, mpi>(
-    io::name{"output-"} << cp.step(), m, r(m), ru(m), rE(m));
+    io::name{"output-"} << cp.step(), lm, r(lm), ru(lm), rE(lm));
 } // analyze
