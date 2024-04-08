@@ -73,7 +73,7 @@ action::advance(control_policy & cp) {
   execute<tasks::hydro::update_primitives>(
     m, r(m), ru(m), rE(m), u(m), p(m), gamma(gt));
 
-#if 1 // FIXME: Debug
+#if 0 // FIXME: Debug
   execute<tasks::util::print_conserved<mesh::domain::quantities>>(
     m, r(m), ru(m), rE(m), 2);
   execute<tasks::util::print_primitives<mesh::domain::quantities>>(

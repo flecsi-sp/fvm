@@ -9,57 +9,64 @@
 namespace muscl::tasks::io {
 
 void inline raw(muscl::io::name const & base,
-  mesh::accessor<ro> m,
-  field<double>::accessor<ro, ro> r_a,
-  field<vec3>::accessor<ro, ro> ru_a,
-  field<double>::accessor<ro, ro> rE_a) {
-  auto r = m.mdcolex<mesh::cells>(r_a);
-  auto ru = m.mdcolex<mesh::cells>(ru_a);
-  auto rE = m.mdcolex<mesh::cells>(rE_a);
+  flecsi::data::multi<mesh::accessor<ro>> mm,
+  flecsi::data::multi<field<double>::accessor<ro, ro>> r_ma,
+  flecsi::data::multi<field<vec3>::accessor<ro, ro>> ru_ma,
+  flecsi::data::multi<field<double>::accessor<ro, ro>> rE_ma) {
 
-  std::ofstream file(
-    base.str() + "-" + std::to_string(flecsi::process()) + ".raw");
+  for(uint32_t i{0}; i<mm.depth(); ++i) {
+    const auto m = mm.accessors()[i];
+    auto r_a = r_ma.accessors()[i];
+    auto ru_a = ru_ma.accessors()[i];
+    auto rE_a = rE_ma.accessors()[i];
+    auto r = m.mdcolex<mesh::cells>(r_a);
+    auto ru = m.mdcolex<mesh::cells>(ru_a);
+    auto rE = m.mdcolex<mesh::cells>(rE_a);
 
-  file << m.size<mesh::x_axis, mesh::domain::quantities>() << " "
-       << m.size<mesh::y_axis, mesh::domain::quantities>() << " "
-       << m.size<mesh::z_axis, mesh::domain::quantities>() << std::endl;
-  file << m.size<mesh::x_axis, mesh::domain::global>() << " "
-       << m.size<mesh::y_axis, mesh::domain::global>() << " "
-       << m.size<mesh::z_axis, mesh::domain::global>() << std::endl;
+    std::ofstream file(
+      base.str() + "-" + std::to_string(flecsi::process()) + ".raw");
 
-  {
-    auto ccoords = m.color_indeces();
-    file << ccoords[mesh::x_axis] << " " << ccoords[mesh::y_axis] << " "
-         << ccoords[mesh::z_axis] << std::endl;
-    auto ccolors = m.axis_colors();
-    file << ccolors[mesh::x_axis] << " " << ccolors[mesh::y_axis] << " "
-         << ccolors[mesh::z_axis] << std::endl;
-  } // scope
+    file << m.size<mesh::x_axis, mesh::domain::quantities>() << " "
+         << m.size<mesh::y_axis, mesh::domain::quantities>() << " "
+         << m.size<mesh::z_axis, mesh::domain::quantities>() << std::endl;
+    file << m.size<mesh::x_axis, mesh::domain::global>() << " "
+         << m.size<mesh::y_axis, mesh::domain::global>() << " "
+         << m.size<mesh::z_axis, mesh::domain::global>() << std::endl;
 
-  // Density
-  for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
-    for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
-        file << r(i, j, k) << std::endl;
+    {
+      auto ccoords = m.color_indeces();
+      file << ccoords[mesh::x_axis] << " " << ccoords[mesh::y_axis] << " "
+           << ccoords[mesh::z_axis] << std::endl;
+      auto ccolors = m.axis_colors();
+      file << ccolors[mesh::x_axis] << " " << ccolors[mesh::y_axis] << " "
+           << ccolors[mesh::z_axis] << std::endl;
+    } // scope
+
+    // Density
+    for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
+      for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
+          file << r(i, j, k) << std::endl;
+        } // for
       } // for
     } // for
-  } // for
 
-  // Momentum
-  for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
-    for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
-        file << ru(i, j, k).x << " " << ru(i, j, k).y << " " << ru(i, j, k).z
-             << std::endl;
+    // Momentum
+    for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
+      for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
+          file << ru(i, j, k).x << " " << ru(i, j, k).y << " " << ru(i, j, k).z
+               << std::endl;
+        } // for
       } // for
     } // for
-  } // for
 
-  // Total Energy
-  for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
-    for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
-      for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
-        file << rE(i, j, k) << std::endl;
+    // Total Energy
+    for(auto k : m.cells<mesh::z_axis, mesh::domain::quantities>()) {
+      for(auto j : m.cells<mesh::y_axis, mesh::domain::quantities>()) {
+        for(auto i : m.cells<mesh::x_axis, mesh::domain::quantities>()) {
+          file << rE(i, j, k) << std::endl;
+        } // for
       } // for
     } // for
   } // for
