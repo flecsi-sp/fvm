@@ -1,5 +1,5 @@
-#ifndef POISSON_CONTROL_HH
-#define POISSON_CONTROL_HH
+#ifndef MUSCL_CONTROL_HH
+#define MUSCL_CONTROL_HH
 
 #include "state.hh"
 #include "tasks/hydro.hh"
@@ -111,4 +111,4 @@ using control = flecsi::run::control<control_policy>;
 
 } // namespace muscl
 
-#endif // POISSON_CONTROL_HH
+#endif // MUSCL_CONTROL_HH
