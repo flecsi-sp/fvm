@@ -16,6 +16,8 @@ template<typename T, flecsi::data::layout L = flecsi::data::layout::dense>
 using field = flecsi::field<T, L>;
 template<typename T>
 using single = field<T, flecsi::data::single>;
+template<typename T>
+using multi = flecsi::data::multi<T>;
 
 struct vec3 {
   double x, y, z;

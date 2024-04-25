@@ -9,10 +9,10 @@
 namespace muscl::tasks::io {
 
 void inline raw(muscl::io::name const & base,
-  flecsi::data::multi<mesh::accessor<ro>> mm,
-  flecsi::data::multi<field<double>::accessor<ro, ro>> r_ma,
-  flecsi::data::multi<field<vec3>::accessor<ro, ro>> ru_ma,
-  flecsi::data::multi<field<double>::accessor<ro, ro>> rE_ma) {
+  multi<mesh::accessor<ro>> mm,
+  multi<field<double>::accessor<ro, ro>> r_ma,
+  multi<field<vec3>::accessor<ro, ro>> ru_ma,
+  multi<field<double>::accessor<ro, ro>> rE_ma) {
 
   for(uint32_t i{0}; i<mm.depth(); ++i) {
     const auto m = mm.accessors()[i];
