@@ -14,8 +14,8 @@ void inline raw(muscl::io::name const & base,
   multi<field<vec3>::accessor<ro, ro>> ru_ma,
   multi<field<double>::accessor<ro, ro>> rE_ma) {
 
-  for(uint32_t i{0}; i<mm.depth(); ++i) {
-    const auto m = mm.accessors()[i];
+  std::size_t i{0};
+  for(auto const [c,m] : mm.components()) {
     auto r_a = r_ma.accessors()[i];
     auto ru_a = ru_ma.accessors()[i];
     auto rE_a = rE_ma.accessors()[i];
@@ -24,7 +24,7 @@ void inline raw(muscl::io::name const & base,
     auto rE = m.mdcolex<mesh::cells>(rE_a);
 
     std::ofstream file(
-      base.str() + "-" + std::to_string(flecsi::process()) + ".raw");
+      base.str() + "-" + std::to_string(c) + ".raw");
 
     file << m.size<mesh::x_axis, mesh::domain::quantities>() << " "
          << m.size<mesh::y_axis, mesh::domain::quantities>() << " "
@@ -69,6 +69,7 @@ void inline raw(muscl::io::name const & base,
         } // for
       } // for
     } // for
+    ++i;
   } // for
 } // raw
 
