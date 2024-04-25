@@ -1,6 +1,8 @@
 #ifndef MUSCL_TASKS_BOUNDARY_HH
 #define MUSCL_TASKS_BOUNDARY_HH
 
+#include "../state.hh"
+
 namespace muscl::tasks {
 
 template<mesh::axis A, mesh::boundary B>
