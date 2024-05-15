@@ -3,6 +3,7 @@
 
 using namespace muscl;
 
-void action::finalize(muscl::control_policy & cp) {
+void
+action::finalize(muscl::control_policy & cp) {
   m.deallocate();
 } // action::finalize
