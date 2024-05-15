@@ -31,6 +31,18 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+#------------------------------------------------------------------------------#
+# Custom unit test function. This needs to be defined unconditionally, i.e.,
+# outside of the top-level project condition.
+#------------------------------------------------------------------------------#
+
+function(fvm_add_unit name)
+  flecsi_add_test(${name} ${ARGN})
+  if(TARGET ${name})
+    target_link_libraries(${name} PUBLIC FleCSI-SP-FVM::FleCSI-SP-FVM)
+  endif()
+endfunction()
+
 if(PROJECT_IS_TOP_LEVEL)
 
   #----------------------------------------------------------------------------#
@@ -110,6 +122,18 @@ if(PROJECT_IS_TOP_LEVEL)
       CONFIG ${CMAKE_BINARY_DIR}/.sphinx
       OUTPUT ${CMAKE_BINARY_DIR}/doc
     )
+  endif()
+
+  #----------------------------------------------------------------------------#
+  # Unit Tests
+  #----------------------------------------------------------------------------#
+
+  option(ENABLE_UNIT_TESTS "Enable unit testing" OFF)
+  mark_as_advanced(ENABLE_UNIT_TESTS)
+  if(ENABLE_UNIT_TESTS)
+    include(FleCSI/unit)
+    flecsi_enable_testing()
+    add_subdirectory(fvm)
   endif()
 endif()
 
