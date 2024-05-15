@@ -15,7 +15,7 @@ void inline raw(muscl::io::name const & base,
   multi<field<double>::accessor<ro, ro>> rE_ma) {
 
   std::size_t i{0};
-  for(auto const [c,m] : mm.components()) {
+  for(auto const [c, m] : mm.components()) {
     auto r_a = r_ma.accessors()[i];
     auto ru_a = ru_ma.accessors()[i];
     auto rE_a = rE_ma.accessors()[i];
@@ -23,8 +23,7 @@ void inline raw(muscl::io::name const & base,
     auto ru = m.mdcolex<mesh::cells>(ru_a);
     auto rE = m.mdcolex<mesh::cells>(rE_a);
 
-    std::ofstream file(
-      base.str() + "-" + std::to_string(c) + ".raw");
+    std::ofstream file(base.str() + "-" + std::to_string(c) + ".raw");
 
     file << m.size<mesh::x_axis, mesh::domain::quantities>() << " "
          << m.size<mesh::y_axis, mesh::domain::quantities>() << " "
