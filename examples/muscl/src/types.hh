@@ -2,7 +2,7 @@
 #define MUSCL_TYPES_HH
 
 #include <flecsi/data.hh>
-#include <fvm/mesh.hh>
+#include <spec/mesh.hh>
 
 namespace muscl {
 inline constexpr flecsi::partition_privilege_t na = flecsi::na, ro = flecsi::ro,
