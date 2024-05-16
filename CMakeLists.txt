@@ -133,7 +133,7 @@ if(PROJECT_IS_TOP_LEVEL)
   if(ENABLE_UNIT_TESTS)
     include(FleCSI/unit)
     flecsi_enable_testing()
-    add_subdirectory(fvm)
+    add_subdirectory(spec)
   endif()
 endif()
 
