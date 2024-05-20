@@ -247,15 +247,15 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     } // is_high
 
     color_coord color_indeces() const {
-      return {B::template get_axis<mesh::cells, mesh::x_axis>().color_index,
-        B::template get_axis<mesh::cells, mesh::y_axis>().color_index,
-        B::template get_axis<mesh::cells, mesh::z_axis>().color_index};
+      return {B::template get_axis<mesh::cells, mesh::x_axis>().color,
+        B::template get_axis<mesh::cells, mesh::y_axis>().color,
+        B::template get_axis<mesh::cells, mesh::z_axis>().color};
     } // color_indeces
 
     color_coord axis_colors() const {
-      return {B::template get_axis<mesh::cells, mesh::x_axis>().colors,
-        B::template get_axis<mesh::cells, mesh::y_axis>().colors,
-        B::template get_axis<mesh::cells, mesh::z_axis>().colors};
+      return {B::template get_axis<mesh::cells, mesh::x_axis>().ax.colors,
+        B::template get_axis<mesh::cells, mesh::y_axis>().ax.colors,
+        B::template get_axis<mesh::cells, mesh::z_axis>().ax.colors};
     } // axis_colors
 
   }; // interface
