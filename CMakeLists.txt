@@ -110,8 +110,8 @@ if(PROJECT_IS_TOP_LEVEL)
     # Create output directory
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/.sphinx/fvm/src)
     execute_process(COMMAND
-      ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/fvm
-      ${CMAKE_BINARY_DIR}/.sphinx/fvm/src/fvm
+      ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/spec
+      ${CMAKE_BINARY_DIR}/.sphinx/fvm/src/spec
     )
     execute_process(COMMAND
       ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/examples
