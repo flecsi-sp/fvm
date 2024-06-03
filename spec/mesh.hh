@@ -109,26 +109,31 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
   /// Mesh Interface.
   template<class B>
   struct interface : B {
+    template<mesh::axis A>
+    FLECSI_INLINE_TARGET base::axis_info axis() const {
+      return B::template axis<mesh::cells, A>();
+    }
 
     /// Return the size for the given axis and domain.
     /// @tparam A  The mesh axis.
     /// @tparam DM The mesh domain.
-    template<axis A, domain DM = quantities>
+    template<mesh::axis A, domain DM = quantities>
     auto size() const {
+      const base::axis_info a = axis<A>();
       if constexpr(DM == quantities) {
-        return B::template size<mesh::cells, A, base::domain::logical>();
+        return a.logical;
       }
       else if constexpr(DM == predictor) {
-        return B::template size<mesh::cells, A, base::domain::logical>() + 2;
+        return a.logical + 2;
       }
       else if constexpr(DM == corrector) {
-        return B::template size<mesh::cells, A, base::domain::logical>() + 1;
+        return a.logical + 1;
       }
       else if constexpr(DM == all) {
-        return B::template size<mesh::cells, A, base::domain::all>();
+        return a.layout.extent();
       }
       else if constexpr(DM == global) {
-        return B::template size<mesh::cells, A, base::domain::global>();
+        return a.axis.extent;
       } // if
     } // size
 
@@ -147,25 +152,24 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     ///     } // for
     ///   } // for
     /// @endcode
-    template<axis A, domain DM = quantities, bool R = false>
+    template<mesh::axis A, domain DM = quantities, bool R = false>
     FLECSI_INLINE_TARGET auto cells() const {
-      flecsi::util::id b, e;
+      flecsi::util::id b, e = axis<A>().layout.extent();
 
       if constexpr(DM == quantities) {
         b = 2;
-        e = B::template size<mesh::cells, A, base::domain::all>() - 2;
+        e -= 2;
       }
       else if constexpr(DM == predictor) {
         b = 1;
-        e = B::template size<mesh::cells, A, base::domain::all>() - 1;
+        e -= 1;
       }
       else if constexpr(DM == corrector) {
         b = 2;
-        e = B::template size<mesh::cells, A, base::domain::all>() - 1;
+        e -= 1;
       }
       else if constexpr(DM == all) {
         b = 0;
-        e = B::template size<mesh::cells, A, base::domain::all>();
       }
       else if(DM == global) {
         flog_fatal(
@@ -187,14 +191,14 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
 
     /// Return the global id of \em i for the given axis.
     /// @tparam A The coordinate axis.
-    template<axis A>
+    template<mesh::axis A>
     FLECSI_INLINE_TARGET std::size_t global_id(std::size_t i) const {
-      return B::template global_id<mesh::cells, A>(i);
+      return axis<A>().global_id(i);
     } // global_id
 
     /// Return the mesh spacing for the given axis.
     /// @tparam A  The coordinate axis.
-    template<axis A>
+    template<mesh::axis A>
     FLECSI_INLINE_TARGET double delta() const {
       if constexpr(A == x_axis) {
         return this->policy_meta().xdelta;
@@ -210,14 +214,14 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     /// Return the cell head for the given axis and id. The head is the trailing
     /// interface of the cell.
     /// @tparam A  The coordinate axis.
-    template<axis A>
+    template<mesh::axis A>
     FLECSI_INLINE_TARGET double head(std::size_t i) const {
       return center<A>(i) - 0.5 * delta<A>();
     } // center
 
     /// Return the cell center for the given axis and id.
     /// @tparam A  The coordinate axis.
-    template<axis A>
+    template<mesh::axis A>
     FLECSI_INLINE_TARGET double center(std::size_t i) const {
       return delta<A>() * global_id<A>(i) + 0.5 * delta<A>();
     } // center
@@ -225,7 +229,7 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     /// Return the cell tail for the given axis and id. The tail is the leading
     /// interface of the cell.
     /// @tparam A  The coordinate axis.
-    template<axis A>
+    template<mesh::axis A>
     FLECSI_INLINE_TARGET double tail(std::size_t i) const {
       return center<A>(i) + 0.5 * delta<A>();
     } // center
@@ -233,29 +237,29 @@ struct mesh : flecsi::topo::specialization<flecsi::topo::narray, mesh> {
     /// Return true if the current color is a low-edge partition for the given
     /// axis.
     /// @tparam A  The coordinate axis.
-    template<axis A>
+    template<mesh::axis A>
     bool is_low() const {
-      return B::template is_low<mesh::cells, A>();
+      return axis<A>().low();
     } // is_low
 
     /// Return true if the current color is a high-edge partition for the given
     /// axis.
     /// @tparam A  The coordinate axis.
-    template<axis A>
+    template<mesh::axis A>
     bool is_high() const {
-      return B::template is_high<mesh::cells, A>();
+      return axis<A>().high();
     } // is_high
 
     color_coord color_indeces() const {
-      return {B::template get_axis<mesh::cells, mesh::x_axis>().color,
-        B::template get_axis<mesh::cells, mesh::y_axis>().color,
-        B::template get_axis<mesh::cells, mesh::z_axis>().color};
+      return {axis<mesh::x_axis>().color,
+        axis<mesh::y_axis>().color,
+        axis<mesh::z_axis>().color};
     } // color_indeces
 
     color_coord axis_colors() const {
-      return {B::template get_axis<mesh::cells, mesh::x_axis>().ax.colors,
-        B::template get_axis<mesh::cells, mesh::y_axis>().ax.colors,
-        B::template get_axis<mesh::cells, mesh::z_axis>().ax.colors};
+      return {axis<mesh::x_axis>().axis.colors,
+        axis<mesh::y_axis>().axis.colors,
+        axis<mesh::z_axis>().axis.colors};
     } // axis_colors
 
   }; // interface
