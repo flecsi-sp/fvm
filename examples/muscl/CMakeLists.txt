@@ -24,5 +24,5 @@ add_executable(muscl
 
 target_link_libraries(muscl FleCSI::FleCSI
   FleCSI-SP-FVM::FleCSI-SP-FVM
-  yaml-cpp
+  yaml-cpp::yaml-cpp
 )
